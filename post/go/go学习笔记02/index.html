@@ -1,0 +1,81 @@
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><title>Go学习笔记02 - Shawn的木屋</title><meta name=renderer content="webkit"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=cache-control content="no-transform"><meta http-equiv=cache-control content="no-siteapp"><meta name=theme-color content="#f8f5ec"><meta name=msapplication-navbutton-color content="#f8f5ec"><meta name=apple-mobile-web-app-capable content="yes"><meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec"><meta name=author content="Shawn"><meta name=description content="Go学习笔记02——变量常量的声明方式"><meta name=keywords content="Go"><meta name=generator content="Hugo 0.82.0 with theme even"><link rel=canonical href=https://erheisw.github.io/post/go/go%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B002/><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/manifest.json><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script><link href=/sass/main.min.8c3cbcb0324c2bb4875ceccba4007cbad4b4ac8377f33af9953c3e7684534a50.css rel=stylesheet><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous><meta property="og:title" content="Go学习笔记02"><meta property="og:description" content="Go学习笔记02——变量常量的声明方式"><meta property="og:type" content="article"><meta property="og:url" content="https://erheisw.github.io/post/go/go%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B002/"><meta property="article:section" content="post"><meta property="article:published_time" content="2021-04-01T14:57:39+08:00"><meta property="article:modified_time" content="2021-04-01T14:57:39+08:00"><meta itemprop=name content="Go学习笔记02"><meta itemprop=description content="Go学习笔记02——变量常量的声明方式"><meta itemprop=datePublished content="2021-04-01T14:57:39+08:00"><meta itemprop=dateModified content="2021-04-01T14:57:39+08:00"><meta itemprop=wordCount content="768"><meta itemprop=keywords content="Go,教程,"><meta name=twitter:card content="summary"><meta name=twitter:title content="Go学习笔记02"><meta name=twitter:description content="Go学习笔记02——变量常量的声明方式"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script><script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]--></head><body><div id=mobile-navbar class=mobile-navbar><div class=mobile-header-logo><a href=/ class=logo>Shawn的木屋</a></div><div class=mobile-navbar-icon><span></span><span></span><span></span></div></div><nav id=mobile-menu class="mobile-menu slideout-menu"><ul class=mobile-menu-list><a href=/><li class=mobile-menu-item>首页</li></a><a href=/post/><li class=mobile-menu-item>归档</li></a><a href=/categories/><li class=mobile-menu-item>分类</li></a><a href=/tags/><li class=mobile-menu-item>标签</li></a><a href=/about/><li class=mobile-menu-item>关于我</li></a></ul></nav><div class=container id=mobile-panel><header id=header class=header><div class=logo-wrapper><a href=/ class=logo>Shawn的木屋</a></div><nav class=site-navbar><ul id=menu class=menu><li class=menu-item><a class=menu-item-link href=/>首页</a></li><li class=menu-item><a class=menu-item-link href=/post/>归档</a></li><li class=menu-item><a class=menu-item-link href=/categories/>分类</a></li><li class=menu-item><a class=menu-item-link href=/tags/>标签</a></li><li class=menu-item><a class=menu-item-link href=/about/>关于我</a></li></ul></nav></header><main id=main class=main><div class=content-wrapper><div id=content class=content><article class=post><header class=post-header><h1 class=post-title>Go学习笔记02</h1><div class=post-meta><span class=post-time>2021-04-01</span><div class=post-category><a href=/categories/%E6%8A%80%E6%9C%AF/>技术</a>
+<a href=/categories/%E7%AC%94%E8%AE%B0/>笔记</a></div><span class=more-meta>约 768 字</span>
+<span class=more-meta>预计阅读 2 分钟</span>
+<span id=busuanzi_container_page_pv class=more-meta><span id=busuanzi_value_page_pv><img src=/img/spinner.svg alt=spinner.svg></span> 次阅读</span></div></header><div class=post-toc id=post-toc><h2 class=post-toc-title>文章目录</h2><div class="post-toc-content always-active"><nav id=TableOfContents><ul><li><a href=#1-变量声明>1. 变量声明</a><ul><li><a href=#11-声明单个变量>1.1 声明单个变量</a></li><li><a href=#12-声明多个变量>1.2 声明多个变量</a></li><li><a href=#13-初始化声明变量>1.3 初始化声明变量</a></li><li><a href=#14-短声明变量>1.4 短声明变量</a></li></ul></li><li><a href=#2-常量>2. 常量</a></li></ul></nav></div></div><div class=post-content><p>由于 <strong>Go</strong> 是静态语言，所以编译器在编译时，会检查变量的类型，要求所有的变量有明确的类型或者编译器能根据上下文推断出来。那么，变量在使用前，必须先声明。本文主要介绍变量和常量是如何在 <strong>Go</strong> 中声明使用的。</p><h2 id=1-变量声明>1. 变量声明</h2><hr><h3 id=11-声明单个变量>1.1 声明单个变量</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-Go data-lang=Go><span class=kd>var</span> <span class=nx>name</span> <span class=kt>int</span>
+</code></pre></td></tr></table></div></div><p>其中 <em>var</em> 是关键字, <em>name</em> 是变量名, <em>int</em> 是变量的数据类型。这句声明中并没有给变量初始化赋值，但实际上 <strong>Go</strong> 会隐式的初始化为零值(Zero)。如这里的 <em>name</em> 值默认为空。</p><p><em>注：关于数据类型的零值会在后续章节介绍。</em></p><h3 id=12-声明多个变量>1.2 声明多个变量</h3><p>在代码时，我们实际上会需要多个变量，如果像上面那样去声明多个变量时，我们会觉得写起来好冗余，当然 <strong>Go</strong> 给我们提供了更简单的声明方式，如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-Go data-lang=Go><span class=kd>var</span> <span class=nx>name</span><span class=p>,</span> <span class=nx>title</span><span class=p>,</span> <span class=nx>job</span> <span class=kt>string</span>
+<span class=kd>var</span> <span class=p>(</span>
+    <span class=nx>name</span>  <span class=kt>string</span>
+    <span class=nx>score</span> <span class=kt>float64</span>
+    <span class=nx>title</span> <span class=kt>string</span>
+<span class=p>)</span>
+</code></pre></td></tr></table></div></div><h3 id=13-初始化声明变量>1.3 初始化声明变量</h3><p>前面我们提到 <strong>Go</strong> 会对变量进行隐式的零值初始化，那么要怎么显示的初始化呢？</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-Go data-lang=Go><span class=kd>var</span> <span class=nx>name</span><span class=p>,</span> <span class=nx>title</span><span class=p>,</span> <span class=nx>job</span> <span class=kt>string</span> <span class=p>=</span> <span class=s>&#34;Shawn&#34;</span><span class=p>,</span> <span class=s>&#34;Engeener&#34;</span><span class=p>,</span> <span class=s>&#34;Program&#34;</span>
+<span class=kd>var</span> <span class=nx>address</span><span class=p>,</span> <span class=nx>age</span> <span class=p>=</span> <span class=s>&#34;Beijing,China&#34;</span><span class=p>,</span> <span class=mh>0x22</span>
+</code></pre></td></tr></table></div></div><h3 id=14-短声明变量>1.4 短声明变量</h3><p>这种方式仅限于 <strong>function</strong> 中，其格式 <em>&lt;name> := &lt;value></em></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-Go data-lang=Go><span class=nx>name</span><span class=p>,</span> <span class=nx>age</span> <span class=o>:=</span> <span class=s>&#34;Shawn&#34;</span><span class=p>,</span> <span class=mh>0x22</span>
+</code></pre></td></tr></table></div></div><p>在 <strong>Go</strong> 语言中还有一种特殊的变量：匿名变量。顾名思义，就是该变量名是不可知的，换句话说变量没有名字。那它怎么表示呢？</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-Go data-lang=Go><span class=kd>func</span> <span class=nf>getVaccination</span><span class=p>()</span> <span class=p>(</span><span class=kt>int</span><span class=p>,</span> <span class=kt>string</span><span class=p>)</span> <span class=p>{</span>
+    <span class=k>return</span> <span class=mi>1</span><span class=p>,</span> <span class=s>&#34;2021-03-12&#34;</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>(){</span>
+    <span class=nx>index</span><span class=p>,</span> <span class=nx>_</span> <span class=o>:=</span> <span class=nf>getVaccination</span><span class=p>()</span>
+    <span class=nx>_</span><span class=p>,</span> <span class=nx>timeStamp</span> <span class=o>:=</span> <span class=nf>getVaccination</span><span class=p>()</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h2 id=2-常量>2. 常量</h2><p>常量，在 <strong>Go</strong> 语言中是在编译阶段初始化的。也就是说如果在 <em>function</em> 中声明了常量，其初始化方式不实在 <em>function</em> 运行时，而是在编译时已经提前初始化了。同时常量的值类型只能是 <em>number</em>, <em>characters(runes)</em>, <em>strings</em> 或者 <em>boolean</em>这其中之一。并且常量值只能是常量表达式，即必须是编译时可执行的，不能使用蕾丝 <em>math.Sin(math.Pi/4)</em> 这种只能在运行时执行的表达式。</p><p>在 <strong>Go</strong> 语言中，由于缺少枚举类型，所以通常使用 <em>iota</em> 枚举声明一组枚举型的常量</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-Go data-lang=Go><span class=kd>type</span> <span class=nx>ByteSize</span> <span class=kt>float64</span>
+
+<span class=kd>const</span> <span class=p>(</span>
+    <span class=nx>_</span>           <span class=p>=</span> <span class=kc>iota</span> <span class=c1>// ignore first value by assigning to blank identifier
+</span><span class=c1></span>    <span class=nx>KB</span> <span class=nx>ByteSize</span> <span class=p>=</span> <span class=mi>1</span> <span class=o>&lt;&lt;</span> <span class=p>(</span><span class=mi>10</span> <span class=o>*</span> <span class=kc>iota</span><span class=p>)</span>
+    <span class=nx>MB</span>
+    <span class=nx>GB</span>
+    <span class=nx>TB</span>
+    <span class=nx>PB</span>
+    <span class=nx>EB</span>
+    <span class=nx>ZB</span>
+    <span class=nx>YB</span>
+<span class=p>)</span>
+</code></pre></td></tr></table></div></div><p>关键字 <em>iota</em> 在 <strong>Go</strong> 中表示连续增长的数字：0，1，2&mldr;等，即隐式的递增重复，所以可以利用其特性声明一组常量值。</p><p>参考文章：<a href=https://golang.org/doc/effective_go#constants>Effective Go</a></p></div><div class=post-copyright><p class=copyright-item><span class=item-title>文章作者</span>
+<span class=item-content>Shawn</span></p><p class=copyright-item><span class=item-title>上次更新</span>
+<span class=item-content>2021-04-01</span></p><p class=copyright-item><span class=item-title>许可协议</span>
+<span class=item-content>版权声明：自由转载-非商用-非衍生-保持署名（<a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh target=_blank>CC BY-NC-ND 4.0</a>）</span></p></div><footer class=post-footer><div class=post-tags><a href=/tags/go/>Go</a>
+<a href=/tags/%E6%95%99%E7%A8%8B/>教程</a></div><nav class=post-nav><a class=next href=/post/go/go%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-01/><span class="next-text nav-default">Go学习笔记—01</span>
+<span class="next-text nav-mobile">下一篇</span>
+<i class="iconfont icon-right"></i></a></nav></footer></article></div><script src=https://utteranc.es/client.js repo=erheisw/blog-comments issue-term=pathname theme=github-light crossorigin=anonymous async></script><noscript>Please enable JavaScript to view the <a href=https://github.com/utterance>comments powered by utterances.</a></noscript></div></main><footer id=footer class=footer><div class=social-links><a href=mailto:francishao.87@gmail.com class="iconfont icon-email" title=email></a><a href=https://github.com/erheisw class="iconfont icon-github" title=github></a><a href=https://v2ex.com/member/erheis class="iconfont icon-v2ex" title=v2ex></a><a href=https://erheisw.github.io/index.xml type=application/rss+xml class="iconfont icon-rss" title=rss></a></div><div class=copyright><span class=power-by>由 <a class=hexo-link href=https://gohugo.io>Hugo</a> 强力驱动</span>
+<span class=division>|</span>
+<span class=theme-info>主题 -
+<a class=theme-link href=https://github.com/olOwOlo/hugo-theme-even>Even</a></span><div class=busuanzi-footer><span id=busuanzi_container_site_pv>本站总访问量 <span id=busuanzi_value_site_pv><img src=/img/spinner.svg alt=spinner.svg></span> 次</span>
+<span class=division>|</span>
+<span id=busuanzi_container_site_uv>本站总访客数 <span id=busuanzi_value_site_uv><img src=/img/spinner.svg alt=spinner.svg></span> 人</span></div><span class=copyright-year>&copy;
+2020 -
+2021
+<span class=heart><i class="iconfont icon-heart"></i></span>
+<span class=author>Shawn</span></span></div></footer><div class=back-to-top id=back-to-top><i class="iconfont icon-up"></i></div></div><script src=https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin=anonymous></script><script src=https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin=anonymous></script><script src=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin=anonymous></script><script type=text/javascript src=/js/main.min.2517c0eb67172a0bae917de4af59b10ca2531411a009d4c0b82f5685259e5771.js></script></body></html>
