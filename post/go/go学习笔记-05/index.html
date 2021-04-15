@@ -1,0 +1,191 @@
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><title>Go学习笔记 05 - Shawn的木屋</title><meta name=renderer content="webkit"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=cache-control content="no-transform"><meta http-equiv=cache-control content="no-siteapp"><meta name=theme-color content="#f8f5ec"><meta name=msapplication-navbutton-color content="#f8f5ec"><meta name=apple-mobile-web-app-capable content="yes"><meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec"><meta name=author content="Shawn"><meta name=description content="Go学习笔记-05"><meta name=keywords content="Go,Array,Slice"><meta name=generator content="Hugo 0.82.0 with theme even"><link rel=canonical href=https://erheisw.github.io/post/go/go%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-05/><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/manifest.json><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script><link href=/sass/main.min.8c3cbcb0324c2bb4875ceccba4007cbad4b4ac8377f33af9953c3e7684534a50.css rel=stylesheet><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous><meta property="og:title" content="Go学习笔记 05"><meta property="og:description" content="Go学习笔记-05"><meta property="og:type" content="article"><meta property="og:url" content="https://erheisw.github.io/post/go/go%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-05/"><meta property="article:section" content="post"><meta property="article:published_time" content="2021-04-14T15:54:41+08:00"><meta property="article:modified_time" content="2021-04-14T15:54:41+08:00"><meta itemprop=name content="Go学习笔记 05"><meta itemprop=description content="Go学习笔记-05"><meta itemprop=datePublished content="2021-04-14T15:54:41+08:00"><meta itemprop=dateModified content="2021-04-14T15:54:41+08:00"><meta itemprop=wordCount content="1397"><meta itemprop=keywords content="Go,教程,"><meta name=twitter:card content="summary"><meta name=twitter:title content="Go学习笔记 05"><meta name=twitter:description content="Go学习笔记-05"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script><script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]--></head><body><div id=mobile-navbar class=mobile-navbar><div class=mobile-header-logo><a href=/ class=logo>Shawn的木屋</a></div><div class=mobile-navbar-icon><span></span><span></span><span></span></div></div><nav id=mobile-menu class="mobile-menu slideout-menu"><ul class=mobile-menu-list><a href=/><li class=mobile-menu-item>首页</li></a><a href=/post/><li class=mobile-menu-item>归档</li></a><a href=/categories/><li class=mobile-menu-item>分类</li></a><a href=/tags/><li class=mobile-menu-item>标签</li></a><a href=/about/><li class=mobile-menu-item>关于我</li></a></ul></nav><div class=container id=mobile-panel><header id=header class=header><div class=logo-wrapper><a href=/ class=logo>Shawn的木屋</a></div><nav class=site-navbar><ul id=menu class=menu><li class=menu-item><a class=menu-item-link href=/>首页</a></li><li class=menu-item><a class=menu-item-link href=/post/>归档</a></li><li class=menu-item><a class=menu-item-link href=/categories/>分类</a></li><li class=menu-item><a class=menu-item-link href=/tags/>标签</a></li><li class=menu-item><a class=menu-item-link href=/about/>关于我</a></li></ul></nav></header><main id=main class=main><div class=content-wrapper><div id=content class=content><article class=post><header class=post-header><h1 class=post-title>Go学习笔记 05</h1><div class=post-meta><span class=post-time>2021-04-14</span><div class=post-category><a href=/categories/%E6%8A%80%E6%9C%AF/>技术</a>
+<a href=/categories/%E7%AC%94%E8%AE%B0/>笔记</a></div><span class=more-meta>约 1397 字</span>
+<span class=more-meta>预计阅读 3 分钟</span>
+<span id=busuanzi_container_page_pv class=more-meta><span id=busuanzi_value_page_pv><img src=/img/spinner.svg alt=spinner.svg></span> 次阅读</span></div></header><div class=post-toc id=post-toc><h2 class=post-toc-title>文章目录</h2><div class="post-toc-content always-active"><nav id=TableOfContents><ul><li><a href=#1-数组>1. 数组</a></li><li><a href=#2-切片>2. 切片</a></li></ul></nav></div></div><div class=post-content><h2 id=1-数组>1. 数组</h2><p><strong>Array</strong>(数组)是一个固定长度特定类型元素组成成的序列。例如 <em>[4]int</em> 代表4个int类型的元素构成的序列。数组常见的声明方式如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kd>var</span> <span class=nx>numbers</span> <span class=p>[</span><span class=mi>4</span><span class=p>]</span><span class=kt>int</span>
+<span class=c1>// array literal
+</span><span class=c1></span><span class=kd>var</span> <span class=nx>names</span> <span class=p>=</span> <span class=p>[</span><span class=mi>4</span><span class=p>]</span><span class=kt>string</span><span class=p>{</span><span class=s>&#34;Tom&#34;</span><span class=p>,</span> <span class=s>&#34;Jack&#34;</span><span class=p>,</span> <span class=s>&#34;Tim&#34;</span><span class=p>,</span> <span class=s>&#34;Bill&#34;</span><span class=p>}</span>
+<span class=nx>scores</span> <span class=o>:=</span> <span class=p>[</span><span class=o>...</span><span class=p>]</span><span class=kt>float64</span><span class=p>{</span><span class=mf>91.2</span><span class=p>,</span> <span class=mf>89.8</span><span class=p>,</span> <span class=mf>90.12</span><span class=p>,</span> <span class=mf>70.12</span><span class=p>}</span>
+<span class=nx>rank</span> <span class=o>:=</span> <span class=p>[</span><span class=mi>4</span><span class=p>]</span><span class=kt>int</span><span class=p>{</span><span class=mi>0</span><span class=p>:</span> <span class=mi>1</span><span class=p>,</span> <span class=mi>2</span><span class=p>:</span> <span class=mi>3</span><span class=p>}</span>
+
+<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>numbers</span><span class=p>[</span><span class=mi>0</span><span class=p>],</span><span class=nx>numbers</span><span class=p>[</span><span class=mi>1</span><span class=p>],</span><span class=nx>numbers</span><span class=p>[</span><span class=mi>2</span><span class=p>],</span><span class=nx>numbers</span><span class=p>[</span><span class=mi>3</span><span class=p>])</span>
+<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>names</span><span class=p>)</span>
+<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>scores</span><span class=p>)</span>
+<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>rank</span><span class=p>)</span>
+</code></pre></td></tr></table></div></div><p><em>[3]int</em>和*[4]int*虽然都是int类型的数组，但这两个由于长度不同，所以这两个不是同一个类型。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span><span class=lnt>9
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kd>var</span> <span class=nx>a</span> <span class=p>[</span><span class=mi>3</span><span class=p>]</span><span class=kt>int</span>
+<span class=kd>var</span> <span class=nx>b</span> <span class=p>[</span><span class=mi>4</span><span class=p>]</span><span class=kt>int</span>
+<span class=kd>var</span> <span class=nx>c</span> <span class=o>*</span><span class=p>[</span><span class=mi>3</span><span class=p>]</span><span class=kt>int</span>
+<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;a&#39;s type is %T\n&#34;</span><span class=p>,</span> <span class=nx>a</span><span class=p>)</span>
+<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;b&#39;s type is %T\n&#34;</span><span class=p>,</span> <span class=nx>b</span><span class=p>)</span>
+<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;c&#39;s type is %T\n&#34;</span><span class=p>,</span> <span class=nx>c</span><span class=p>)</span>
+<span class=c1>// print result
+</span><span class=c1>//a&#39;s type is [3]int
+</span><span class=c1>//b&#39;s type is [4]int
+</span></code></pre></td></tr></table></div></div><p>由于变量<em>a</em>和<em>b</em>类型不同，所以两者不能进行复制赋值：a=b。显然数组复制时，除了类型相同，长度也必须一致。</p><p>在<strong>Go</strong>中数组是值类型，即数组类型的变量表示的是整个数组，与<strong>C</strong>中指向数组第一个元素的指针完全不同。所以在函数间使用数组传值时，内存的开销和性能都会产生问题，为了解决这类问题，我们可以声明一个<strong>数组指针</strong>（注：不是指针数组）指向数组，这样传值时复制的仅仅是数组指针，它只有8个字节。这不仅有效的利用内存提升了性能，当然也引入了其它问题，即内存共享。由于数组指针指向的是原始数组的地址，所以在函数内对通过数组指针进行的修改，会引发原数组的改变。那这个问题怎么解决，<strong>Go</strong>中当然提供了解决方法，新的数据类型：<strong>Slice</strong>。</p><h2 id=2-切片>2. 切片</h2><p><strong>Slice</strong>(切片)与数组一样，也是存储若干同一类型的容器。但与数组不同的是，它没有固定长度，即它可以添加删除元素。</p><p>切片有三种声明方式，如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// slice literal declare
+</span><span class=c1></span><span class=nx>letters</span> <span class=o>:=</span> <span class=p>[]</span><span class=kt>string</span><span class=p>{</span><span class=s>&#34;a&#34;</span><span class=p>,</span> <span class=s>&#34;b&#34;</span><span class=p>,</span> <span class=s>&#34;c&#34;</span><span class=p>,</span> <span class=s>&#34;d&#34;</span><span class=p>}</span>
+<span class=c1>// created with built-in function called make, which has the signature
+</span><span class=c1></span><span class=nx>numbers</span> <span class=o>:=</span> <span class=nb>make</span><span class=p>([]</span><span class=kt>int</span><span class=p>,</span> <span class=mi>3</span><span class=p>,</span> <span class=mi>4</span><span class=p>)</span>
+<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>letters</span><span class=p>,</span> <span class=nx>numbers</span><span class=p>)</span>
+<span class=c1>// created by slicing an existing array or slice
+</span><span class=c1></span><span class=nx>b</span> <span class=o>:=</span> <span class=p>[</span><span class=mi>5</span><span class=p>]</span><span class=kt>byte</span><span class=p>{</span><span class=sc>&#39;a&#39;</span><span class=p>,</span> <span class=sc>&#39;b&#39;</span><span class=p>,</span> <span class=sc>&#39;c&#39;</span><span class=p>,</span> <span class=sc>&#39;d&#39;</span><span class=p>,</span> <span class=sc>&#39;e&#39;</span><span class=p>}</span>
+<span class=nx>s1</span> <span class=o>:=</span> <span class=nx>b</span><span class=p>[</span><span class=mi>0</span><span class=p>:</span><span class=mi>1</span><span class=p>]</span>
+<span class=nx>s2</span> <span class=o>:=</span> <span class=nx>b</span><span class=p>[</span><span class=mi>1</span><span class=p>:</span><span class=mi>2</span><span class=p>:</span><span class=mi>3</span><span class=p>]</span>
+<span class=nx>s3</span> <span class=o>:=</span> <span class=nx>s2</span><span class=p>[</span><span class=mi>0</span><span class=p>:</span><span class=mi>2</span><span class=p>]</span>
+<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>b</span><span class=p>,</span> <span class=nx>s1</span><span class=p>,</span> <span class=nx>s2</span><span class=p>,</span> <span class=nx>s3</span><span class=p>)</span>
+</code></pre></td></tr></table></div></div><p>前两种方式非常容易理解，这里就不再赘述，这里我们简单说下第三种<em>slicing</em>方式。首先切片有<em>长度</em>和<em>容量</em>，长度表示的元素的数量，而容量指的是数组的长度，所以切片的长度可以不大于容量。</p><p><em>slicing</em>表达式：slice[i,j,k]，表达式中的<em>slice</em>可以时数组或者切片。<em>i</em>表示被切分数组或切片的起始索引，<em>j</em>表示的是终止索引（注：不包括终止索引的元素），<em>k</em>表示的新切片容量的索引，并且这个容量索引不能超过被切分数组或切片的容量，并且<em>k</em>可以省略，默认就是被切分数组或切片的原始数量-i。所以新切片的长度：j-i，容量为：k-i。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=nx>numbers</span><span class=o>:=</span><span class=p>[]</span><span class=kt>int</span><span class=p>{</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>,</span><span class=mi>3</span><span class=p>,</span><span class=mi>4</span><span class=p>,</span><span class=mi>5</span><span class=p>,</span><span class=mi>6</span><span class=p>}</span>
+<span class=nx>s</span> <span class=o>:=</span> <span class=nx>numbers</span><span class=p>[:]</span>
+<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;numbers:%v length:%d,capcity:%d\n&#34;</span><span class=p>,</span> <span class=nx>numbers</span><span class=p>,</span> <span class=nb>len</span><span class=p>(</span><span class=nx>numbers</span><span class=p>),</span> <span class=nb>cap</span><span class=p>(</span><span class=nx>numbers</span><span class=p>))</span>
+<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;s:%v length:%d, capcity:%d\n&#34;</span><span class=p>,</span> <span class=nx>s</span><span class=p>,</span> <span class=nb>len</span><span class=p>(</span><span class=nx>s</span><span class=p>),</span> <span class=nb>cap</span><span class=p>(</span><span class=nx>s</span><span class=p>))</span>
+<span class=nx>s1</span> <span class=o>:=</span> <span class=nx>s</span><span class=p>[</span><span class=mi>1</span><span class=p>:</span><span class=mi>2</span><span class=p>:</span><span class=mi>5</span><span class=p>]</span>
+<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;s1:%v, length:%d, capcity:%d\n&#34;</span><span class=p>,</span> <span class=nx>s1</span><span class=p>,</span> <span class=nb>len</span><span class=p>(</span><span class=nx>s1</span><span class=p>),</span> <span class=nb>cap</span><span class=p>(</span><span class=nx>s1</span><span class=p>))</span>
+<span class=nx>s2</span> <span class=o>:=</span> <span class=nx>s1</span><span class=p>[</span><span class=mi>0</span><span class=p>:</span><span class=mi>3</span><span class=p>:</span><span class=mi>4</span><span class=p>]</span>
+<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;s2:%v length:%d,capcity:%d\n&#34;</span><span class=p>,</span> <span class=nx>s2</span><span class=p>,</span> <span class=nb>len</span><span class=p>(</span><span class=nx>s2</span><span class=p>),</span> <span class=nb>cap</span><span class=p>(</span><span class=nx>s2</span><span class=p>))</span>
+</code></pre></td></tr></table></div></div><p>上面代码运行的结果如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-shell data-lang=shell>numbers:<span class=o>[</span><span class=m>1</span> <span class=m>2</span> <span class=m>3</span> <span class=m>4</span> <span class=m>5</span> 6<span class=o>]</span> length:6,capcity:6
+s:<span class=o>[</span><span class=m>1</span> <span class=m>2</span> <span class=m>3</span> <span class=m>4</span> <span class=m>5</span> 6<span class=o>]</span> length:6, capcity:6
+s1:<span class=o>[</span>2<span class=o>]</span>, length:1, capcity:5
+s2:<span class=o>[</span><span class=m>2</span> <span class=m>3</span> 4<span class=o>]</span> length:3,capcity:4
+</code></pre></td></tr></table></div></div><p>从上面运行的结果，我们发现一个问题。似乎<em>s</em>，<em>s1</em>，<em>s2</em>与<em>numbers</em>共享的是同一个数组。没错，切片的底层包含一一段连续的数组，长度和容量。其结构如下所示：</p><p><img src=/media/slice-struct.png alt=slice-struct></p><p>从上面的切片结构图可以知道，切片的底层数组其实是一个指向数组的指针，所以当新切片的容量不超过底层数组的长度时，新切片对数据的操作会影响原始切片。那么有什么办法解决呢？最根本办法就是底层的指针指向新的数组</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=nx>nums</span> <span class=o>:=</span> <span class=p>[]</span><span class=kt>int</span><span class=p>{</span><span class=mi>1</span><span class=p>,</span> <span class=mi>2</span><span class=p>,</span> <span class=mi>3</span><span class=p>}</span>
+<span class=nx>s</span> <span class=o>:=</span> <span class=nx>nums</span><span class=p>[</span><span class=mi>1</span><span class=p>:</span><span class=mi>2</span><span class=p>:</span><span class=mi>2</span><span class=p>]</span>
+<span class=nx>s</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span> <span class=p>=</span> <span class=mi>3</span>
+<span class=nx>s</span> <span class=p>=</span> <span class=nb>append</span><span class=p>(</span><span class=nx>s</span><span class=p>,</span> <span class=mi>4</span><span class=p>)</span>
+<span class=nx>s</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span> <span class=p>=</span> <span class=mi>2</span>
+<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>nums</span><span class=p>,</span> <span class=nx>s</span><span class=p>)</span>
+<span class=nx>s1</span> <span class=o>:=</span> <span class=nb>make</span><span class=p>([]</span><span class=kt>int</span><span class=p>,</span> <span class=mi>1</span><span class=p>)</span>
+<span class=nb>copy</span><span class=p>(</span><span class=nx>s1</span><span class=p>,</span> <span class=nx>s</span><span class=p>)</span>
+<span class=nx>s1</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span> <span class=p>=</span> <span class=mi>2</span>
+<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>nums</span><span class=p>,</span> <span class=nx>s1</span><span class=p>)</span>
+</code></pre></td></tr></table></div></div><p>由于切片底层的数组指针这个特性，有时会让人产生疑惑，请看如下代码：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+	<span class=kd>var</span> <span class=nx>numbers</span> <span class=p>[]</span><span class=kt>int</span>
+	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;%v\t%p\n&#34;</span><span class=p>,</span> <span class=nx>numbers</span><span class=p>,</span> <span class=nx>numbers</span><span class=p>)</span>
+	<span class=nf>generate</span><span class=p>(</span><span class=nx>numbers</span><span class=p>)</span>
+	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;%v\t%p\n&#34;</span><span class=p>,</span> <span class=nx>numbers</span><span class=p>,</span> <span class=nx>numbers</span><span class=p>)</span>
+	<span class=nx>numbers</span> <span class=p>=</span> <span class=nb>append</span><span class=p>(</span><span class=nx>numbers</span><span class=p>,</span> <span class=mi>1</span><span class=p>,</span> <span class=mi>2</span><span class=p>,</span> <span class=mi>3</span><span class=p>)</span>
+  <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;%v\t%p\n&#34;</span><span class=p>,</span> <span class=nx>numbers</span><span class=p>,</span> <span class=nx>numbers</span><span class=p>)</span>
+	<span class=nf>update</span><span class=p>(</span><span class=nx>numbers</span><span class=p>)</span>
+	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;%v\t%p\n&#34;</span><span class=p>,</span> <span class=nx>numbers</span><span class=p>,</span> <span class=nx>numbers</span><span class=p>)</span>
+
+<span class=p>}</span>
+<span class=kd>func</span> <span class=nf>generate</span><span class=p>(</span><span class=nx>numbers</span> <span class=p>[]</span><span class=kt>int</span><span class=p>)</span> <span class=p>{</span>
+	<span class=nx>numbers</span> <span class=p>=</span> <span class=nb>append</span><span class=p>(</span><span class=nx>numbers</span><span class=p>,</span> <span class=mi>1</span><span class=p>,</span> <span class=mi>2</span><span class=p>,</span> <span class=mi>3</span><span class=p>)</span>
+	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;%v\t%p\n&#34;</span><span class=p>,</span> <span class=nx>numbers</span><span class=p>,</span> <span class=nx>numbers</span><span class=p>)</span>
+<span class=p>}</span>
+<span class=kd>func</span> <span class=nf>update</span><span class=p>(</span><span class=nx>numbers</span> <span class=p>[]</span><span class=kt>int</span><span class=p>)</span> <span class=p>{</span>
+	<span class=k>if</span> <span class=nb>len</span><span class=p>(</span><span class=nx>numbers</span><span class=p>)</span> <span class=p>&gt;</span> <span class=mi>0</span> <span class=p>{</span>
+		<span class=nx>numbers</span><span class=p>[</span><span class=mi>0</span><span class=p>]</span> <span class=p>=</span> <span class=mi>10</span>
+	<span class=p>}</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>请🤔下上面代码的运行结果是什么？</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-shell data-lang=shell>// before invoking generate <span class=k>function</span>
+<span class=o>[]</span>	0x0
+// invoking generate <span class=k>function</span>
+<span class=o>[</span><span class=m>1</span> <span class=m>2</span> 3<span class=o>]</span>	0xc000136000
+// after invoking generate <span class=k>function</span>
+<span class=o>[]</span>	0x0
+// before invoking update <span class=k>function</span>
+<span class=o>[</span><span class=m>1</span> <span class=m>2</span> 3<span class=o>]</span>	0xc000016048
+// after invoking update <span class=k>function</span>
+<span class=o>[</span><span class=m>10</span> <span class=m>2</span> 3<span class=o>]</span>	0xc000136030
+</code></pre></td></tr></table></div></div><p>🤔为什么会是这个结果</p></div><div class=post-copyright><p class=copyright-item><span class=item-title>文章作者</span>
+<span class=item-content>Shawn</span></p><p class=copyright-item><span class=item-title>上次更新</span>
+<span class=item-content>2021-04-14</span></p><p class=copyright-item><span class=item-title>许可协议</span>
+<span class=item-content>版权声明：自由转载-非商用-非衍生-保持署名（<a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh target=_blank>CC BY-NC-ND 4.0</a>）</span></p></div><footer class=post-footer><div class=post-tags><a href=/tags/go/>Go</a>
+<a href=/tags/%E6%95%99%E7%A8%8B/>教程</a></div><nav class=post-nav><a class=next href=/post/go/go%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-04/><span class="next-text nav-default">Go学习笔记 04</span>
+<span class="next-text nav-mobile">下一篇</span>
+<i class="iconfont icon-right"></i></a></nav></footer></article></div><script src=https://utteranc.es/client.js repo=erheisw/blog-comments issue-term=pathname theme=github-light crossorigin=anonymous async></script><noscript>Please enable JavaScript to view the <a href=https://github.com/utterance>comments powered by utterances.</a></noscript></div></main><footer id=footer class=footer><div class=social-links><a href=mailto:francishao.87@gmail.com class="iconfont icon-email" title=email></a><a href=https://github.com/erheisw class="iconfont icon-github" title=github></a><a href=https://v2ex.com/member/erheis class="iconfont icon-v2ex" title=v2ex></a><a href=https://erheisw.github.io/index.xml type=application/rss+xml class="iconfont icon-rss" title=rss></a></div><div class=copyright><span class=power-by>由 <a class=hexo-link href=https://gohugo.io>Hugo</a> 强力驱动</span>
+<span class=division>|</span>
+<span class=theme-info>主题 -
+<a class=theme-link href=https://github.com/olOwOlo/hugo-theme-even>Even</a></span><div class=busuanzi-footer><span id=busuanzi_container_site_pv>本站总访问量 <span id=busuanzi_value_site_pv><img src=/img/spinner.svg alt=spinner.svg></span> 次</span>
+<span class=division>|</span>
+<span id=busuanzi_container_site_uv>本站总访客数 <span id=busuanzi_value_site_uv><img src=/img/spinner.svg alt=spinner.svg></span> 人</span></div><span class=copyright-year>&copy;
+2020 -
+2021
+<span class=heart><i class="iconfont icon-heart"></i></span>
+<span class=author>Shawn</span></span></div></footer><div class=back-to-top id=back-to-top><i class="iconfont icon-up"></i></div></div><script src=https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin=anonymous></script><script src=https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin=anonymous></script><script src=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin=anonymous></script><script type=text/javascript src=/js/main.min.2517c0eb67172a0bae917de4af59b10ca2531411a009d4c0b82f5685259e5771.js></script></body></html>
