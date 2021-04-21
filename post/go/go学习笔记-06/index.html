@@ -1,0 +1,123 @@
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><title>Go学习笔记 06 - Shawn的木屋</title><meta name=renderer content="webkit"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=cache-control content="no-transform"><meta http-equiv=cache-control content="no-siteapp"><meta name=theme-color content="#f8f5ec"><meta name=msapplication-navbutton-color content="#f8f5ec"><meta name=apple-mobile-web-app-capable content="yes"><meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec"><meta name=author content="Shawn"><meta name=description content="Go学习笔记-06"><meta name=keywords content="Map,Boolean,Go"><meta name=generator content="Hugo 0.82.1 with theme even"><link rel=canonical href=https://erheisw.github.io/post/go/go%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-06/><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/manifest.json><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script><link href=/sass/main.min.8c3cbcb0324c2bb4875ceccba4007cbad4b4ac8377f33af9953c3e7684534a50.css rel=stylesheet><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous><meta property="og:title" content="Go学习笔记 06"><meta property="og:description" content="Go学习笔记-06"><meta property="og:type" content="article"><meta property="og:url" content="https://erheisw.github.io/post/go/go%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-06/"><meta property="article:section" content="post"><meta property="article:published_time" content="2021-04-21T11:23:58+08:00"><meta property="article:modified_time" content="2021-04-21T11:23:58+08:00"><meta itemprop=name content="Go学习笔记 06"><meta itemprop=description content="Go学习笔记-06"><meta itemprop=datePublished content="2021-04-21T11:23:58+08:00"><meta itemprop=dateModified content="2021-04-21T11:23:58+08:00"><meta itemprop=wordCount content="1027"><meta itemprop=keywords content="Go,教程,"><meta name=twitter:card content="summary"><meta name=twitter:title content="Go学习笔记 06"><meta name=twitter:description content="Go学习笔记-06"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script><script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]--></head><body><div id=mobile-navbar class=mobile-navbar><div class=mobile-header-logo><a href=/ class=logo>Shawn的木屋</a></div><div class=mobile-navbar-icon><span></span><span></span><span></span></div></div><nav id=mobile-menu class="mobile-menu slideout-menu"><ul class=mobile-menu-list><a href=/><li class=mobile-menu-item>首页</li></a><a href=/post/><li class=mobile-menu-item>归档</li></a><a href=/categories/><li class=mobile-menu-item>分类</li></a><a href=/tags/><li class=mobile-menu-item>标签</li></a><a href=/about/><li class=mobile-menu-item>关于我</li></a></ul></nav><div class=container id=mobile-panel><header id=header class=header><div class=logo-wrapper><a href=/ class=logo>Shawn的木屋</a></div><nav class=site-navbar><ul id=menu class=menu><li class=menu-item><a class=menu-item-link href=/>首页</a></li><li class=menu-item><a class=menu-item-link href=/post/>归档</a></li><li class=menu-item><a class=menu-item-link href=/categories/>分类</a></li><li class=menu-item><a class=menu-item-link href=/tags/>标签</a></li><li class=menu-item><a class=menu-item-link href=/about/>关于我</a></li></ul></nav></header><main id=main class=main><div class=content-wrapper><div id=content class=content><article class=post><header class=post-header><h1 class=post-title>Go学习笔记 06</h1><div class=post-meta><span class=post-time>2021-04-21</span><div class=post-category><a href=/categories/%E6%8A%80%E6%9C%AF/>技术</a>
+<a href=/categories/%E7%AC%94%E8%AE%B0/>笔记</a></div><span class=more-meta>约 1027 字</span>
+<span class=more-meta>预计阅读 3 分钟</span>
+<span id=busuanzi_container_page_pv class=more-meta><span id=busuanzi_value_page_pv><img src=/img/spinner.svg alt=spinner.svg></span> 次阅读</span></div></header><div class=post-toc id=post-toc><h2 class=post-toc-title>文章目录</h2><div class="post-toc-content always-active"><nav id=TableOfContents><ul><li><a href=#1-字典>1. 字典</a><ul><li><a href=#11-字典的生命初始化方式>1.1 字典的生命初始化方式</a></li><li><a href=#12-字典的相关操作>1.2 字典的相关操作</a></li><li><a href=#13-判断key是否存在>1.3 判断key是否存在</a></li><li><a href=#14-遍历字典所有键值对>1.4 遍历字典所有键值对</a></li><li><a href=#15-字典在并发下不是安全的>1.5 字典在并发下不是安全的</a></li></ul></li><li><a href=#2-布尔>2. 布尔</a></li></ul></nav></div></div><div class=post-content><h2 id=1-字典>1. 字典</h2><p>字典（Map类型），是一个由键值对组成的内置数据类型，它为构建程序提供了非常方便有效的数据结构。</p><p>它是哈希表的一种实现，所以它必须以键（key）-值（value）对的形式存储，并且 <em>key</em> 必须是唯一的。<em>key</em> 的数据类型是任何进行相等比较运算的类型如：整型，浮点，复数，字符串，指针，接口，结构体或数组等，但切片（Slice）不能用做<em>key</em> 的类型，因为切片是对底层数据的引用，所以它不能进行相等比较运算，类似切片的数据类型还有：字典、函数。<em>value</em> 的数据类型可以是任何数据类型，没有限制。</p><p>所以声明字典类型变量时，必须指定 <em>key</em> 和 <em>value</em> 的数据类型，其格式如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kd>map</span><span class=p>[</span><span class=nx>KEY_TYPE</span><span class=p>]</span><span class=nx>VALUE_TYPE</span>
+</code></pre></td></tr></table></div></div><h3 id=11-字典的生命初始化方式>1.1 字典的生命初始化方式</h3><p>字典的声明初始化有以下三种方式：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// 只声明
+</span><span class=c1></span><span class=kd>var</span> <span class=nx>students</span> <span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kt>string</span>
+<span class=c1>// 声明初始化
+</span><span class=c1></span><span class=nx>scores</span> <span class=o>:=</span> <span class=nb>make</span><span class=p>(</span><span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kt>float64</span><span class=p>)</span>
+<span class=c1>// 声明初始化赋值
+</span><span class=c1></span><span class=nx>timeZones</span> <span class=o>:=</span> <span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kt>int</span><span class=p>{</span>
+		<span class=s>&#34;UTC&#34;</span><span class=p>:</span> <span class=mi>0</span> <span class=o>*</span> <span class=mi>60</span> <span class=o>*</span> <span class=mi>60</span><span class=p>,</span>
+		<span class=s>&#34;EST&#34;</span><span class=p>:</span> <span class=o>-</span><span class=mi>5</span> <span class=o>*</span> <span class=mi>60</span> <span class=o>*</span> <span class=mi>60</span><span class=p>,</span>
+		<span class=s>&#34;CST&#34;</span><span class=p>:</span> <span class=o>-</span><span class=mi>6</span> <span class=o>*</span> <span class=mi>60</span> <span class=o>*</span> <span class=mi>60</span><span class=p>,</span>
+		<span class=s>&#34;MST&#34;</span><span class=p>:</span> <span class=o>-</span><span class=mi>7</span> <span class=o>*</span> <span class=mi>60</span> <span class=o>*</span> <span class=mi>60</span><span class=p>,</span>
+		<span class=s>&#34;PST&#34;</span><span class=p>:</span> <span class=o>-</span><span class=mi>8</span> <span class=o>*</span> <span class=mi>60</span> <span class=o>*</span> <span class=mi>60</span><span class=p>,</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h3 id=12-字典的相关操作>1.2 字典的相关操作</h3><p>在字典中，可以根据 <em>key</em> 获取 <em>value</em> ，并且即使 <em>key</em> 不存在，程序也不会异常出错，它会返回 <em>value</em> 类型的零值，如果 <em>value</em> 的类型是 <em>int</em>，则返回0</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=nx>utcZone</span> <span class=o>:=</span> <span class=nx>timeZones</span><span class=p>[</span><span class=s>&#34;UTC&#34;</span><span class=p>]</span>
+<span class=nx>chinaZone</span> <span class=o>:=</span> <span class=nx>timeZones</span><span class=p>[</span><span class=s>&#34;China&#34;</span><span class=p>]</span>
+<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>utcZone</span><span class=p>,</span> <span class=nx>chinaZone</span><span class=p>)</span>
+</code></pre></td></tr></table></div></div><p>添加元素或更新元素的操作是同一个：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=nx>scores</span><span class=p>[</span><span class=s>&#34;Tom&#34;</span><span class=p>]</span> <span class=p>=</span> <span class=mf>92.0</span>
+<span class=nx>scores</span><span class=p>[</span><span class=s>&#34;Jack&#34;</span><span class=p>]</span> <span class=p>=</span> <span class=mf>80.5</span>
+<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>scores</span><span class=p>)</span>
+<span class=c1>// update Tom&#39;s score
+</span><span class=c1></span><span class=nx>scores</span><span class=p>[</span><span class=s>&#34;Tom&#34;</span><span class=p>]</span> <span class=p>=</span> <span class=mf>92.5</span>
+<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>scores</span><span class=p>)</span>
+</code></pre></td></tr></table></div></div><p>删除元素，使用的是内置的函数 <em>delete</em> ，如果 <em>key</em> 不存在，<em>delete</em> 函数会静默处理，不会引发运行时异常。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=nb>delete</span><span class=p>(</span><span class=nx>scores</span><span class=p>,</span> <span class=s>&#34;Tom&#34;</span><span class=p>)</span>
+<span class=nb>delete</span><span class=p>(</span><span class=nx>scores</span><span class=p>,</span> <span class=s>&#34;Tim&#34;</span><span class=p>)</span>
+</code></pre></td></tr></table></div></div><h3 id=13-判断key是否存在>1.3 判断key是否存在</h3><p>前面我们提到 <em>key</em> 即使不存在，也会返回 <em>value</em> 类型的零值，所以要判断 <em>key</em> 是否存在，不能通过判断 <em>value</em> 的值是否为零值这种方式。那么，怎么办呢？别急，<strong>Go</strong> 给我们提供了一种方式：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=k>if</span> <span class=nx>timScore</span><span class=p>,</span> <span class=nx>ok</span> <span class=o>:=</span> <span class=nx>scores</span><span class=p>[</span><span class=s>&#34;Tim&#34;</span><span class=p>];</span> <span class=p>!{</span>
+  <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;Not record Tim&#39;s score.&#34;</span><span class=p>)</span>
+<span class=p>}</span><span class=k>else</span><span class=p>{</span>
+  <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;Tim&#39;s score is %.2f&#34;</span><span class=p>,</span><span class=nx>timScore</span><span class=p>)</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h3 id=14-遍历字典所有键值对>1.4 遍历字典所有键值对</h3><p>如果我们想获取字典中所有的 <em>key</em> 、<em>value</em> ，怎么办？在 <strong>Go</strong>中，没有内置类似其他语言的keys或values函数，但我们可以通过循环达到同样的目的。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// Get keys and values
+</span><span class=c1></span><span class=k>for</span> <span class=nx>name</span><span class=p>,</span> <span class=nx>score</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>scores</span> <span class=p>{</span>
+  <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>name</span><span class=p>,</span><span class=nx>score</span><span class=p>)</span>
+<span class=p>}</span>
+<span class=c1>// Get keys only
+</span><span class=c1></span><span class=k>for</span> <span class=nx>name</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>scores</span> <span class=p>{</span>
+  <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>name</span><span class=p>)</span>
+<span class=p>}</span>
+<span class=c1>// Get values only
+</span><span class=c1></span><span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>score</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>scores</span> <span class=p>{</span>
+  <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;score:%.2f\n&#34;</span><span class=p>,</span><span class=nx>score</span><span class=p>)</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h3 id=15-字典在并发下不是安全的>1.5 字典在并发下不是安全的</h3><p>这里简单介绍下，在并发的程序中，字典变量的读写不是安全的，就是说在并发这种情况下，需要使用同步机制来确保对字典变量的读写是安全的。</p><p>最后，在遍历字典时，其顺序是随机的，所以如果想要升序或降序输出字典，需要先进行排序。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>import</span> <span class=s>&#34;sort&#34;</span>
+
+<span class=kd>var</span> <span class=nx>m</span> <span class=kd>map</span><span class=p>[</span><span class=kt>int</span><span class=p>]</span><span class=kt>string</span>
+<span class=kd>var</span> <span class=nx>keys</span> <span class=p>[]</span><span class=kt>int</span>
+<span class=k>for</span> <span class=nx>k</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>m</span> <span class=p>{</span>
+    <span class=nx>keys</span> <span class=p>=</span> <span class=nb>append</span><span class=p>(</span><span class=nx>keys</span><span class=p>,</span> <span class=nx>k</span><span class=p>)</span>
+<span class=p>}</span>
+<span class=nx>sort</span><span class=p>.</span><span class=nf>Ints</span><span class=p>(</span><span class=nx>keys</span><span class=p>)</span>
+<span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>k</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>keys</span> <span class=p>{</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;Key:&#34;</span><span class=p>,</span> <span class=nx>k</span><span class=p>,</span> <span class=s>&#34;Value:&#34;</span><span class=p>,</span> <span class=nx>m</span><span class=p>[</span><span class=nx>k</span><span class=p>])</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h2 id=2-布尔>2. 布尔</h2><p>布尔类型，其实在上面的内容中我们已经使用过。它的值就两种：true和false。这里值得注意的是，<strong>Go</strong> 语言中布尔值 true !=1，false != 0，即两者不能转换。</p></div><div class=post-copyright><p class=copyright-item><span class=item-title>文章作者</span>
+<span class=item-content>Shawn</span></p><p class=copyright-item><span class=item-title>上次更新</span>
+<span class=item-content>2021-04-21</span></p><p class=copyright-item><span class=item-title>许可协议</span>
+<span class=item-content>版权声明：自由转载-非商用-非衍生-保持署名（<a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh target=_blank>CC BY-NC-ND 4.0</a>）</span></p></div><footer class=post-footer><div class=post-tags><a href=/tags/go/>Go</a>
+<a href=/tags/%E6%95%99%E7%A8%8B/>教程</a></div><nav class=post-nav><a class=next href=/post/go/go%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-05/><span class="next-text nav-default">Go学习笔记 05</span>
+<span class="next-text nav-mobile">下一篇</span>
+<i class="iconfont icon-right"></i></a></nav></footer></article></div><script src=https://utteranc.es/client.js repo=erheisw/blog-comments issue-term=pathname theme=github-light crossorigin=anonymous async></script><noscript>Please enable JavaScript to view the <a href=https://github.com/utterance>comments powered by utterances.</a></noscript></div></main><footer id=footer class=footer><div class=social-links><a href=https://twitter.com/erheishao class="iconfont icon-twitter" title=twitter></a><a href=https://github.com/erheisw class="iconfont icon-github" title=github></a><a href=https://erheisw.github.io/index.xml type=application/rss+xml class="iconfont icon-rss" title=rss></a></div><div class=copyright><span class=power-by>由 <a class=hexo-link href=https://gohugo.io>Hugo</a> 强力驱动</span>
+<span class=division>|</span>
+<span class=theme-info>主题 -
+<a class=theme-link href=https://github.com/olOwOlo/hugo-theme-even>Even</a></span><div class=busuanzi-footer><span id=busuanzi_container_site_pv>本站总访问量 <span id=busuanzi_value_site_pv><img src=/img/spinner.svg alt=spinner.svg></span> 次</span>
+<span class=division>|</span>
+<span id=busuanzi_container_site_uv>本站总访客数 <span id=busuanzi_value_site_uv><img src=/img/spinner.svg alt=spinner.svg></span> 人</span></div><span class=copyright-year>&copy;
+2020 -
+2021
+<span class=heart><i class="iconfont icon-heart"></i></span>
+<span class=author>Shawn</span></span></div></footer><div class=back-to-top id=back-to-top><i class="iconfont icon-up"></i></div></div><script src=https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin=anonymous></script><script src=https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin=anonymous></script><script src=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin=anonymous></script><script type=text/javascript src=/js/main.min.2517c0eb67172a0bae917de4af59b10ca2531411a009d4c0b82f5685259e5771.js></script></body></html>
