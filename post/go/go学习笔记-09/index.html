@@ -1,0 +1,335 @@
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><title>Go学习笔记 09 - Shawn的木屋</title><meta name=renderer content="webkit"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=cache-control content="no-transform"><meta http-equiv=cache-control content="no-siteapp"><meta name=theme-color content="#f8f5ec"><meta name=msapplication-navbutton-color content="#f8f5ec"><meta name=apple-mobile-web-app-capable content="yes"><meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec"><meta name=author content="Shawn"><meta name=description content="Go学习笔记-09"><meta name=keywords content="struct,function"><meta name=generator content="Hugo 0.82.1 with theme even"><link rel=canonical href=https://erheisw.github.io/post/go/go%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-09/><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/manifest.json><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script><link href=/sass/main.min.8c3cbcb0324c2bb4875ceccba4007cbad4b4ac8377f33af9953c3e7684534a50.css rel=stylesheet><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous><meta property="og:title" content="Go学习笔记 09"><meta property="og:description" content="Go学习笔记-09"><meta property="og:type" content="article"><meta property="og:url" content="https://erheisw.github.io/post/go/go%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-09/"><meta property="article:section" content="post"><meta property="article:published_time" content="2021-04-24T18:28:07+08:00"><meta property="article:modified_time" content="2021-04-24T18:28:07+08:00"><meta itemprop=name content="Go学习笔记 09"><meta itemprop=description content="Go学习笔记-09"><meta itemprop=datePublished content="2021-04-24T18:28:07+08:00"><meta itemprop=dateModified content="2021-04-24T18:28:07+08:00"><meta itemprop=wordCount content="2421"><meta itemprop=keywords content="Go,教程,"><meta name=twitter:card content="summary"><meta name=twitter:title content="Go学习笔记 09"><meta name=twitter:description content="Go学习笔记-09"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script><script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]--></head><body><div id=mobile-navbar class=mobile-navbar><div class=mobile-header-logo><a href=/ class=logo>Shawn的木屋</a></div><div class=mobile-navbar-icon><span></span><span></span><span></span></div></div><nav id=mobile-menu class="mobile-menu slideout-menu"><ul class=mobile-menu-list><a href=/><li class=mobile-menu-item>首页</li></a><a href=/post/><li class=mobile-menu-item>归档</li></a><a href=/categories/><li class=mobile-menu-item>分类</li></a><a href=/tags/><li class=mobile-menu-item>标签</li></a><a href=/about/><li class=mobile-menu-item>关于我</li></a></ul></nav><div class=container id=mobile-panel><header id=header class=header><div class=logo-wrapper><a href=/ class=logo>Shawn的木屋</a></div><nav class=site-navbar><ul id=menu class=menu><li class=menu-item><a class=menu-item-link href=/>首页</a></li><li class=menu-item><a class=menu-item-link href=/post/>归档</a></li><li class=menu-item><a class=menu-item-link href=/categories/>分类</a></li><li class=menu-item><a class=menu-item-link href=/tags/>标签</a></li><li class=menu-item><a class=menu-item-link href=/about/>关于我</a></li></ul></nav></header><main id=main class=main><div class=content-wrapper><div id=content class=content><article class=post><header class=post-header><h1 class=post-title>Go学习笔记 09</h1><div class=post-meta><span class=post-time>2021-04-24</span><div class=post-category><a href=/categories/%E6%8A%80%E6%9C%AF/>技术</a>
+<a href=/categories/%E7%AC%94%E8%AE%B0/>笔记</a></div><span class=more-meta>约 2421 字</span>
+<span class=more-meta>预计阅读 5 分钟</span>
+<span id=busuanzi_container_page_pv class=more-meta><span id=busuanzi_value_page_pv><img src=/img/spinner.svg alt=spinner.svg></span> 次阅读</span></div></header><div class=post-toc id=post-toc><h2 class=post-toc-title>文章目录</h2><div class="post-toc-content always-active"><nav id=TableOfContents><ul><li><a href=#1-结构体>1. 结构体</a><ul><li><a href=#11-结构体是什么>1.1 结构体是什么？</a></li><li><a href=#12-定义结构体>1.2 定义结构体</a></li><li><a href=#13-结构体可比较>1.3 结构体可比较</a></li><li><a href=#14-结构体嵌套>1.4 结构体嵌套</a></li></ul></li></ul></nav></div></div><div class=post-content><p>结构体，在 <em>Go</em> 开发的项目中，是最常见的复合类型之一，它提供了基本类型没有的特性：多样性，即它可以把对象的属性描述的更丰富更全面。本篇会带你揭开它的面纱，同时还会介绍它与基友 <strong>函数</strong>的故事。</p><h2 id=1-结构体>1. 结构体</h2><h3 id=11-结构体是什么>1.1 结构体是什么？</h3><p>结构体，是什么呢？它也是一种数据类型，不过是一种复合类型，它有0个或多个任何类型的变量构成的特殊类型。有点抽象，那我们举个例子：公司员工，这类对象有哪些属性呢？</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-fallback data-lang=fallback>Employee {
+ 员工号
+ 姓名
+ 地址
+ 职位
+ 薪水
+ 直属领导
+}
+</code></pre></td></tr></table></div></div><p>我们发现Employee有很多属性，如果想用 <em>Go</em> 的基本类型描述它，是特别繁琐的。所以有了 <strong>Struct</strong> 来简化，结构体会很方便的把这些属性组合在一起，构成一个新的类型 <em>Employee</em></p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kd>type</span> <span class=nx>Employee</span> <span class=kd>struct</span><span class=p>{</span>
+    <span class=nx>ID</span>        <span class=kt>int</span>
+    <span class=nx>Name</span>      <span class=kt>string</span>
+    <span class=nx>Address</span>   <span class=kt>string</span>
+    <span class=nx>Position</span>  <span class=kt>string</span>
+    <span class=nx>Salary</span>    <span class=kt>int</span>
+    <span class=nx>ManagerID</span> <span class=kt>int</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>这个<em>Employee</em>结构体，组合了上面列举的所有属性，我们可以用它很方便的去管理每个员工的信息</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kd>var</span> <span class=nx>tom</span> <span class=nx>Employee</span>
+<span class=nx>tom</span><span class=p>.</span><span class=nx>ID</span> <span class=p>=</span> <span class=mi>1001</span>
+<span class=nx>tom</span><span class=p>.</span><span class=nx>Name</span> <span class=p>=</span> <span class=s>&#34;Tom&#34;</span>
+<span class=nx>tom</span><span class=p>.</span><span class=nx>Salary</span> <span class=p>=</span> <span class=mi>1000</span>
+</code></pre></td></tr></table></div></div><p>从这个简单的例子，也许你已经发现结构体是如何定义的了。</p><h3 id=12-定义结构体>1.2 定义结构体</h3><p>结构体是如何声明的呢？</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-fallback data-lang=fallback>type 结构体名 struct {
+    属性名1 属性类型
+    属性名2 属性类型
+}
+</code></pre></td></tr></table></div></div><p>好，我们来看看具体示例</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kd>type</span> <span class=nx>Student</span> <span class=kd>struct</span><span class=p>{</span>
+    <span class=nx>ID</span>        <span class=kt>int</span>
+    <span class=nx>Name</span>      <span class=kt>string</span>
+    <span class=nx>Score</span>     <span class=kt>float64</span>
+    <span class=nx>Rank</span>      <span class=kt>int</span>
+<span class=p>}</span>
+<span class=kd>var</span> <span class=nx>jack</span> <span class=nx>Student</span>
+<span class=nx>jack</span><span class=p>.</span><span class=nx>Name</span> <span class=p>=</span> <span class=s>&#34;Jack Ma&#34;</span>
+</code></pre></td></tr></table></div></div><p>没错，就是这么简单。结构体声明完成后，你就可以使用它定义具体的对象变量了。你发现结构体的每个属性都是单独一行，这样写很清晰，但肯能会遇到定义多个同一类型的属性，你会觉得写的有点繁琐。其实，如果是这种情况，你可以写在一行。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kd>type</span> <span class=nx>Employee</span> <span class=kd>struct</span><span class=p>{</span>
+    <span class=nx>ID</span>        <span class=kt>int</span>
+    <span class=nx>Name</span><span class=p>,</span> <span class=nx>Address</span>   <span class=kt>string</span>
+    <span class=nx>Position</span>  <span class=kt>string</span>
+    <span class=nx>Salary</span>    <span class=kt>int</span>
+    <span class=nx>ManagerID</span> <span class=kt>int</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>使用声明的结构体类型定义变量，与我们前面介绍的基本类型的基本是一致的。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kd>var</span> <span class=nx>tom</span> <span class=nx>Employee</span>
+<span class=nx>tom</span><span class=p>.</span><span class=nx>ID</span> <span class=p>=</span><span class=mi>1</span> 
+<span class=nx>tom</span><span class=p>.</span><span class=nx>Name</span><span class=p>=</span><span class=s>&#34;Tom&#34;</span>
+<span class=nx>jack</span> <span class=o>:=</span> <span class=nx>Employee</span><span class=p>{}</span>
+<span class=nx>pony</span> <span class=o>:=</span> <span class=o>&amp;</span><span class=nx>Employee</span><span class=p>{}</span>
+<span class=nx>kitty</span> <span class=o>:=</span> <span class=nb>new</span><span class=p>(</span><span class=nx>Employee</span><span class=p>)</span>
+</code></pre></td></tr></table></div></div><p>如果你打印<em>jack</em>时，会发现的输出如下信息：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;%#v\n&#34;</span><span class=p>,</span><span class=nx>jack</span><span class=p>)</span>
+<span class=c1>//output
+</span><span class=c1>// main.Employee{ID:0, Name:&#34;&#34;, Address:&#34;&#34;, Position:&#34;&#34;, Salary:0, ManagerID:0}
+</span></code></pre></td></tr></table></div></div><p>不要疑惑，即使结构体的变量没有赋值，它的属性值也都会初始化为属性类型的零值。也许上面例子中的赋值方式，让你写的很恼火。喝点凉茶，结构体也是有字面量初始化声明的。</p><ul><li><p>顺序赋值，按照其属性的声明顺序依次赋值。它必须是所有的属性值，否则会报错。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=nx>tom</span> <span class=o>:=</span> <span class=nx>Employee</span><span class=p>{</span><span class=mi>1001</span><span class=p>,</span><span class=s>&#34;Tom&#34;</span><span class=p>,</span><span class=s>&#34;B13&#34;</span><span class=p>,</span><span class=s>&#34;Senior&#34;</span><span class=p>,</span><span class=mi>10000</span><span class=p>,</span><span class=mi>100</span><span class=p>}</span>
+<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;%#v\n&#34;</span><span class=p>,</span><span class=nx>tom</span><span class=p>)</span>
+</code></pre></td></tr></table></div></div></li><li><p>“键值”式赋值，即属性名:属性值格式。这种方式可以忽略非必要属性，当某个属性忽略赋值时，则会默认零值。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-fallback data-lang=fallback>tom := Employee{
+ID:1001,
+Name:&#34;Tom&#34;,  //每行一个键值对，以&#34;,&#34;结尾，即使结构体新增了属性，只要在增加一行键值对即可
+}
+fmt.Printf(&#34;%#v\n&#34;,tom)
+</code></pre></td></tr></table></div></div></li></ul><p>前面说过结构体的属性类型可以是任何类型，那么你也许会想它能否是自己本身呢？这是个有意思的问题。很抱歉，是不能直接定义结构体本身的属性，但可以定义结构体指针类型的属性，这让我们想到了数据结构：树和链表。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// Binary tree
+</span><span class=c1></span><span class=kd>type</span> <span class=nx>tree</span> <span class=kd>struct</span><span class=p>{</span>
+  <span class=nx>value</span> <span class=kt>int</span>
+  <span class=nx>left</span><span class=p>,</span> <span class=nx>right</span> <span class=o>*</span><span class=nx>tree</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>也许你会有些疑问，为什么不能声明结构体本身的属性，而必须时指针类型呢？这个问题同样让我有疑问，后来<em>Google</em>了下，在 [Stackoverflow](<a href=https://stackoverflow.com/questions/16741618/why-cant-a-struct-have-a-member-that-is-of-the-same-type-as-itself>c - Why can&rsquo;t a struct have a member that is of the same type as itself? - Stack Overflow</a>) 上看到了一个有趣的回答，这里我说下我的理解（建议看原文）：假设你有个员工结构体是这样定义的：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-fallback data-lang=fallback>type Employee struct{
+  ID int
+  Name string
+  Address string
+  Manager Employee
+}
+</code></pre></td></tr></table></div></div><p>这里每个员工都有自己的领导，似乎合理没什么太大的问题。可现实中不是所有的员工都有领导的，比如CEO，他没有一对一的直接领导，上面的定义显然与实际不符。也许你会说CEO的领导能为空值么，很不幸，结构体的非指针类型变量是没有空值，生命变量同时会在内存中申请一段地址。那来了个新问题，<em>Employee</em> 变量需要声明多大的内存呢？当生命变量时，其申请的内存应该是属性类型的大小之和（这里不考虑内存对齐问题），可是<em>Employee</em> 变量里还有它本身，所以计算 <em>Employee</em> 变量的需要内存时，就变成了一个无限递归，最终导致编译器崩溃出错。</p><p>然而为什么结构体指针类型就可以呢？因为它本身是一个指针类型，不是结构体类型，它的大小是固定的，只不过是它存储的地址是指向结构体类型的变量。所以，结构体内可以定义其指针类型的属性。</p><h3 id=13-结构体可比较>1.3 结构体可比较</h3><p>如果结构体内所有的属性字段类型都是可比较的，那么结构体本身就是可以直接想等或不等运算的。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kd>type</span> <span class=nx>Point</span> <span class=kd>struct</span> <span class=p>{</span>
+	<span class=nx>X</span><span class=p>,</span> <span class=nx>Y</span> <span class=kt>int</span>
+<span class=p>}</span>
+
+<span class=nx>a</span><span class=p>,</span> <span class=nx>b</span><span class=p>,</span> <span class=nx>c</span> <span class=o>:=</span> <span class=nx>Point</span><span class=p>{</span><span class=mi>1</span><span class=p>,</span> <span class=mi>2</span><span class=p>},</span> <span class=nx>Point</span><span class=p>{</span><span class=mi>1</span><span class=p>,</span> <span class=mi>2</span><span class=p>},</span> <span class=o>&amp;</span><span class=nx>Point</span><span class=p>{</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>}</span>
+<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;a==?%v\ta==c?%v\tb==c?%v&#34;</span><span class=p>,</span><span class=nx>a</span><span class=o>==</span><span class=nx>b</span><span class=p>,</span><span class=nx>a</span><span class=o>==*</span><span class=nx>c</span><span class=p>,</span><span class=nx>b</span><span class=o>==*</span><span class=nx>c</span><span class=p>)</span>
+</code></pre></td></tr></table></div></div><h3 id=14-结构体嵌套>1.4 结构体嵌套</h3><p>结构体，没有提供继承相关的功能，但它有一种特别机制—嵌入式机制。即可以将结构体A作为结构体B的属性（可匿名），那么结构体B不仅获得了结构体的属性还包括它的方法。哦，这里先简单介绍下结构体的方法。</p><ul><li><p>结构体的方法。顾名思义，就是只能是结构体类型的变量才能使用。它有两种形式：非指针类型的方法和指针类型的方法。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+  
+<span class=kn>import</span> <span class=p>(</span>
+	<span class=s>&#34;fmt&#34;</span>
+<span class=p>)</span>
+  
+<span class=kd>type</span> <span class=nx>Point</span> <span class=kd>struct</span> <span class=p>{</span>
+	<span class=nx>X</span><span class=p>,</span> <span class=nx>Y</span> <span class=kt>int</span>
+<span class=p>}</span>
+  
+<span class=kd>func</span> <span class=p>(</span><span class=nx>p</span> <span class=nx>Point</span><span class=p>)</span> <span class=nf>Move</span><span class=p>(</span><span class=nx>offset</span> <span class=kt>int</span><span class=p>)</span> <span class=p>{</span>
+	<span class=nx>p</span><span class=p>.</span><span class=nx>X</span> <span class=o>+=</span> <span class=nx>offset</span>
+	<span class=nx>p</span><span class=p>.</span><span class=nx>Y</span> <span class=o>+=</span> <span class=nx>offset</span>
+<span class=p>}</span>
+<span class=kd>func</span> <span class=p>(</span><span class=nx>p</span> <span class=o>*</span><span class=nx>Point</span><span class=p>)</span> <span class=nf>MoveNew</span><span class=p>(</span><span class=nx>offset</span> <span class=kt>int</span><span class=p>)</span> <span class=p>{</span>
+	<span class=nx>p</span><span class=p>.</span><span class=nx>X</span> <span class=o>+=</span> <span class=nx>offset</span>
+	<span class=nx>p</span><span class=p>.</span><span class=nx>Y</span> <span class=o>+=</span> <span class=nx>offset</span>
+<span class=p>}</span>
+  
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+	<span class=nx>p</span> <span class=o>:=</span> <span class=nx>Point</span><span class=p>{</span><span class=nx>X</span><span class=p>:</span> <span class=mi>1</span><span class=p>,</span> <span class=nx>Y</span><span class=p>:</span> <span class=mi>2</span><span class=p>}</span>
+	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>p</span><span class=p>)</span>
+	<span class=nx>p</span><span class=p>.</span><span class=nf>Move</span><span class=p>(</span><span class=mi>5</span><span class=p>)</span>
+	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>p</span><span class=p>)</span>
+	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;After invoking pointer method.&#34;</span><span class=p>)</span>
+	<span class=nx>p</span><span class=p>.</span><span class=nf>MoveNew</span><span class=p>(</span><span class=mi>5</span><span class=p>)</span>
+	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>p</span><span class=p>)</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>从上面的例子中，可以发现即使声明的变量不是指针类型的，我们也可以调用指针类型的方法，所以我们在调用方法时，不必太关注变量是指针还是一般类型的。这里我们还需提下，之所以有指针类型的方法，是因为在 <em>Go</em> 中，参数的发生的事值拷贝，因此当我们需要通过方法修改属性值时，参数必须是变量本身不能是一个拷贝。还有一点，方法名首写字母的大写问题，当需要在包外部调用这个方法时，方法的首写字母必须大写才可以允许包外使用。结构体的属性也是类似的，这些相关的内容会在后续笔记介绍。</p></li><li><p>嵌入机制</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+  
+<span class=kn>import</span> <span class=p>(</span>
+	<span class=s>&#34;fmt&#34;</span>
+<span class=p>)</span>
+  
+<span class=kd>type</span> <span class=nx>Point</span> <span class=kd>struct</span> <span class=p>{</span>
+	<span class=nx>X</span><span class=p>,</span> <span class=nx>Y</span> <span class=kt>int</span>
+<span class=p>}</span>
+  
+<span class=kd>func</span> <span class=p>(</span><span class=nx>p</span> <span class=o>*</span><span class=nx>Point</span><span class=p>)</span> <span class=nf>Move</span><span class=p>(</span><span class=nx>offset</span> <span class=kt>int</span><span class=p>)</span> <span class=p>{</span>
+	<span class=nx>p</span><span class=p>.</span><span class=nx>X</span> <span class=o>+=</span> <span class=nx>offset</span>
+	<span class=nx>p</span><span class=p>.</span><span class=nx>Y</span> <span class=o>+=</span> <span class=nx>offset</span>
+<span class=p>}</span>
+  
+<span class=kd>type</span> <span class=nx>Circle</span> <span class=kd>struct</span> <span class=p>{</span>
+	<span class=nx>Center</span> <span class=nx>Point</span>
+	<span class=nx>Radius</span> <span class=kt>int</span>
+<span class=p>}</span>
+  
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+	<span class=nx>a</span> <span class=o>:=</span> <span class=nx>Circle</span><span class=p>{</span>
+      <span class=nx>Center</span><span class=p>:</span> <span class=nx>Point</span><span class=p>{</span><span class=mi>1</span><span class=p>,</span> <span class=mi>2</span><span class=p>},</span>
+      <span class=nx>Radius</span><span class=p>:</span> <span class=mi>10</span><span class=p>,</span>
+	<span class=p>}</span>
+	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>a</span><span class=p>)</span>
+	<span class=nx>a</span><span class=p>.</span><span class=nx>Center</span><span class=p>.</span><span class=nf>Move</span><span class=p>(</span><span class=mi>5</span><span class=p>)</span>
+	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>a</span><span class=p>)</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>上面的例子，我们在结构体 <em>Circle</em> 中嵌入了一个 <em>Point</em> 类型的 <em>Center</em> 属性，很自然的我们可以通过 <em>Center</em> 属性调用 <em>Move</em> 方法。其实这里我们可以省略 <em>Center</em> 这个属性，看看会发生什么。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+  
+<span class=kn>import</span> <span class=p>(</span>
+	<span class=s>&#34;fmt&#34;</span>
+<span class=p>)</span>
+  
+<span class=kd>type</span> <span class=nx>Point</span> <span class=kd>struct</span> <span class=p>{</span>
+	<span class=nx>X</span><span class=p>,</span> <span class=nx>Y</span> <span class=kt>int</span>
+<span class=p>}</span>
+  
+<span class=kd>func</span> <span class=p>(</span><span class=nx>p</span> <span class=o>*</span><span class=nx>Point</span><span class=p>)</span> <span class=nf>Move</span><span class=p>(</span><span class=nx>offset</span> <span class=kt>int</span><span class=p>)</span> <span class=p>{</span>
+	<span class=nx>p</span><span class=p>.</span><span class=nx>X</span> <span class=o>+=</span> <span class=nx>offset</span>
+	<span class=nx>p</span><span class=p>.</span><span class=nx>Y</span> <span class=o>+=</span> <span class=nx>offset</span>
+<span class=p>}</span>
+  
+<span class=kd>type</span> <span class=nx>Circle</span> <span class=kd>struct</span> <span class=p>{</span>
+	<span class=nx>Point</span>
+	<span class=nx>Radius</span> <span class=kt>int</span>
+<span class=p>}</span>
+  
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+	<span class=nx>a</span> <span class=o>:=</span> <span class=nx>Circle</span><span class=p>{</span>
+      <span class=nx>Point</span><span class=p>:</span>  <span class=nx>Point</span><span class=p>{</span><span class=mi>1</span><span class=p>,</span> <span class=mi>2</span><span class=p>},</span>
+      <span class=nx>Radius</span><span class=p>:</span> <span class=mi>10</span><span class=p>,</span>
+	<span class=p>}</span>
+	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>a</span><span class=p>)</span>
+	<span class=nx>a</span><span class=p>.</span><span class=nf>Move</span><span class=p>(</span><span class=mi>5</span><span class=p>)</span>
+	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>a</span><span class=p>.</span><span class=nx>X</span><span class=p>,</span><span class=nx>a</span><span class=p>.</span><span class=nx>Y</span><span class=p>)</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>没错，当我们潜入一个匿名的结构体 <em>Point</em> ，结构体 <em>Circle</em> 好像可以直接使用 <em>Point</em> 的属性和方法了。其实这是一种语法糖。如果 <em>Circle</em> 中也有 <em>X</em> 属性时，调用 <em>Move</em> 会发生什么呢？它会改变哪个 <em>X</em> 呢？自己试试吧。</p></li></ul><p>参考文章</p><p>[The Go Programming language]([The Go Programming Language <a href=https://www.oreilly.com/library/view/the-go-programming/9780134190570/>Book] (oreilly.com)</a>)</p></div><div class=post-copyright><p class=copyright-item><span class=item-title>文章作者</span>
+<span class=item-content>Shawn</span></p><p class=copyright-item><span class=item-title>上次更新</span>
+<span class=item-content>2021-04-24</span></p><p class=copyright-item><span class=item-title>许可协议</span>
+<span class=item-content>版权声明：自由转载-非商用-非衍生-保持署名（<a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh target=_blank>CC BY-NC-ND 4.0</a>）</span></p></div><footer class=post-footer><div class=post-tags><a href=/tags/go/>Go</a>
+<a href=/tags/%E6%95%99%E7%A8%8B/>教程</a></div><nav class=post-nav><a class=next href=/post/go/go%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-08/><span class="next-text nav-default">Go学习笔记 08</span>
+<span class="next-text nav-mobile">下一篇</span>
+<i class="iconfont icon-right"></i></a></nav></footer></article></div><script src=https://utteranc.es/client.js repo=erheisw/blog-comments issue-term=pathname theme=github-light crossorigin=anonymous async></script><noscript>Please enable JavaScript to view the <a href=https://github.com/utterance>comments powered by utterances.</a></noscript></div></main><footer id=footer class=footer><div class=social-links><a href=https://twitter.com/erheishao class="iconfont icon-twitter" title=twitter></a><a href=https://github.com/erheisw class="iconfont icon-github" title=github></a><a href=https://erheisw.github.io/index.xml type=application/rss+xml class="iconfont icon-rss" title=rss></a></div><div class=copyright><span class=power-by>由 <a class=hexo-link href=https://gohugo.io>Hugo</a> 强力驱动</span>
+<span class=division>|</span>
+<span class=theme-info>主题 -
+<a class=theme-link href=https://github.com/olOwOlo/hugo-theme-even>Even</a></span><div class=busuanzi-footer><span id=busuanzi_container_site_pv>本站总访问量 <span id=busuanzi_value_site_pv><img src=/img/spinner.svg alt=spinner.svg></span> 次</span>
+<span class=division>|</span>
+<span id=busuanzi_container_site_uv>本站总访客数 <span id=busuanzi_value_site_uv><img src=/img/spinner.svg alt=spinner.svg></span> 人</span></div><span class=copyright-year>&copy;
+2020 -
+2021
+<span class=heart><i class="iconfont icon-heart"></i></span>
+<span class=author>Shawn</span></span></div></footer><div class=back-to-top id=back-to-top><i class="iconfont icon-up"></i></div></div><script src=https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin=anonymous></script><script src=https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin=anonymous></script><script src=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin=anonymous></script><script type=text/javascript src=/js/main.min.2517c0eb67172a0bae917de4af59b10ca2531411a009d4c0b82f5685259e5771.js></script></body></html>
