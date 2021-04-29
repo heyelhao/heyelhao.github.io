@@ -1,0 +1,325 @@
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><title>Go学习笔记 10 - Shawn的木屋</title><meta name=renderer content="webkit"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=cache-control content="no-transform"><meta http-equiv=cache-control content="no-siteapp"><meta name=theme-color content="#f8f5ec"><meta name=msapplication-navbutton-color content="#f8f5ec"><meta name=apple-mobile-web-app-capable content="yes"><meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec"><meta name=author content="Shawn"><meta name=description content="Go学习笔记-10"><meta name=keywords content="Function,Error"><meta name=generator content="Hugo 0.82.1 with theme even"><link rel=canonical href=https://erheisw.github.io/post/go/go%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-10/><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/manifest.json><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script><link href=/sass/main.min.8c3cbcb0324c2bb4875ceccba4007cbad4b4ac8377f33af9953c3e7684534a50.css rel=stylesheet><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous><meta property="og:title" content="Go学习笔记 10"><meta property="og:description" content="Go学习笔记-10"><meta property="og:type" content="article"><meta property="og:url" content="https://erheisw.github.io/post/go/go%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-10/"><meta property="article:section" content="post"><meta property="article:published_time" content="2021-04-28T10:20:57+08:00"><meta property="article:modified_time" content="2021-04-28T10:20:57+08:00"><meta itemprop=name content="Go学习笔记 10"><meta itemprop=description content="Go学习笔记-10"><meta itemprop=datePublished content="2021-04-28T10:20:57+08:00"><meta itemprop=dateModified content="2021-04-28T10:20:57+08:00"><meta itemprop=wordCount content="1658"><meta itemprop=keywords content="Go,教程,"><meta name=twitter:card content="summary"><meta name=twitter:title content="Go学习笔记 10"><meta name=twitter:description content="Go学习笔记-10"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script><script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]--></head><body><div id=mobile-navbar class=mobile-navbar><div class=mobile-header-logo><a href=/ class=logo>Shawn的木屋</a></div><div class=mobile-navbar-icon><span></span><span></span><span></span></div></div><nav id=mobile-menu class="mobile-menu slideout-menu"><ul class=mobile-menu-list><a href=/><li class=mobile-menu-item>首页</li></a><a href=/post/><li class=mobile-menu-item>归档</li></a><a href=/categories/><li class=mobile-menu-item>分类</li></a><a href=/tags/><li class=mobile-menu-item>标签</li></a><a href=/about/><li class=mobile-menu-item>关于我</li></a></ul></nav><div class=container id=mobile-panel><header id=header class=header><div class=logo-wrapper><a href=/ class=logo>Shawn的木屋</a></div><nav class=site-navbar><ul id=menu class=menu><li class=menu-item><a class=menu-item-link href=/>首页</a></li><li class=menu-item><a class=menu-item-link href=/post/>归档</a></li><li class=menu-item><a class=menu-item-link href=/categories/>分类</a></li><li class=menu-item><a class=menu-item-link href=/tags/>标签</a></li><li class=menu-item><a class=menu-item-link href=/about/>关于我</a></li></ul></nav></header><main id=main class=main><div class=content-wrapper><div id=content class=content><article class=post><header class=post-header><h1 class=post-title>Go学习笔记 10</h1><div class=post-meta><span class=post-time>2021-04-28</span><div class=post-category><a href=/categories/%E6%8A%80%E6%9C%AF/>技术</a>
+<a href=/categories/%E7%AC%94%E8%AE%B0/>笔记</a></div><span class=more-meta>约 1658 字</span>
+<span class=more-meta>预计阅读 4 分钟</span>
+<span id=busuanzi_container_page_pv class=more-meta><span id=busuanzi_value_page_pv><img src=/img/spinner.svg alt=spinner.svg></span> 次阅读</span></div></header><div class=post-toc id=post-toc><h2 class=post-toc-title>文章目录</h2><div class="post-toc-content always-active"><nav id=TableOfContents><ul><li><a href=#1-函数声明>1. 函数声明</a></li><li><a href=#2-多个返回值函数>2. 多个返回值函数</a></li><li><a href=#3-函数变量和匿名函数>3. 函数变量和匿名函数</a><ul><li><a href=#31-函数变量>3.1 函数变量</a></li><li><a href=#32-匿名函数>3.2 匿名函数</a></li></ul></li></ul></nav></div></div><div class=post-content><p><strong>Function</strong> ，即函数，编程中是必不可少的元素。它把一段逻辑组织在一起，可以方便的重复使用这段逻辑，减少了代码冗余。今天这篇，我们来学习下 <em>Go</em> 中的函数相关的知识，同时还会涉及一些 <em>Error</em> 的知识点和用法。</p><h2 id=1-函数声明>1. 函数声明</h2><p>函数格式很简单，它有函数名、参数列表和可选的返回结果列表，以及最重要的函数体。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-fallback data-lang=fallback>func name(parameter-list)(result-list){
+    //body
+}
+</code></pre></td></tr></table></div></div><p>参数列表或返回结果列表，如果不需要，则可以忽略。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// 无参数也无结果
+</span><span class=c1></span><span class=kd>func</span> <span class=nf>PrintNow</span><span class=p>(){</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>time</span><span class=p>.</span><span class=nf>Now</span><span class=p>())</span>
+<span class=p>}</span>
+
+<span class=c1>// 无参数有结果
+</span><span class=c1></span><span class=kd>func</span> <span class=nf>Now</span><span class=p>()</span><span class=nx>time</span><span class=p>.</span><span class=nx>Time</span><span class=p>{</span>
+  <span class=k>return</span> <span class=nx>time</span><span class=p>.</span><span class=nf>Now</span><span class=p>()</span>
+<span class=p>}</span>
+
+<span class=c1>// 有参数无结果
+</span><span class=c1></span><span class=kd>func</span> <span class=nf>Hi</span><span class=p>(</span><span class=nx>name</span> <span class=kt>string</span><span class=p>){</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;Hi, %v!&#34;</span><span class=p>,</span> <span class=nx>name</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=c1>// 有参数有结果
+</span><span class=c1></span><span class=kd>func</span> <span class=nf>Max</span><span class=p>(</span><span class=nx>a</span><span class=p>,</span> <span class=nx>b</span> <span class=kt>int</span><span class=p>)</span> <span class=p>(</span><span class=nx>bigger</span> <span class=kt>int</span><span class=p>)</span> <span class=p>{</span>
+    <span class=k>if</span> <span class=nx>a</span> <span class=p>&gt;</span> <span class=nx>b</span> <span class=p>{</span>
+          <span class=nx>bigger</span> <span class=p>=</span> <span class=nx>a</span>
+    <span class=p>}</span> <span class=k>else</span> <span class=p>{</span>
+          <span class=nx>bigger</span> <span class=p>=</span> <span class=nx>b</span>
+    <span class=p>}</span>
+    <span class=k>return</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>上面的例子列举了几种常见的函数声明形式，下一节重点说下多个返回值的函数以及 <em>Error</em>。</p><h2 id=2-多个返回值函数>2. 多个返回值函数</h2><p><em>Go</em> 中的函数返回值可以有多个，这与 <em>Java</em> 、<em>C++</em> 等不同。其格式与上面的例子没什么不同。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kd>func</span> <span class=nf>Size</span> <span class=p>(</span><span class=nx>rect</span> <span class=nx>image</span><span class=p>.</span><span class=nx>Rectangle</span><span class=p>)(</span><span class=nx>width</span><span class=p>,</span> <span class=nx>height</span> <span class=kt>int</span><span class=p>){</span>
+    <span class=nx>width</span><span class=p>,</span> <span class=nx>height</span> <span class=p>=</span> <span class=nx>rect</span><span class=p>.</span><span class=nx>Width</span><span class=p>,</span> <span class=nx>rect</span><span class=p>.</span><span class=nx>Height</span>
+    <span class=k>return</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>其实多个返回值函数，更常用在函数有 <em>Error</em> 的情况下。即若函数处理中发生了一些错误或异常时，不再返回期望的结果，需要返回错误信息。比如在进行 <strong>I/O</strong> 操作时，这种情况更普遍。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kd>func</span> <span class=nf>CountImages</span><span class=p>(</span><span class=nx>url</span> <span class=kt>string</span><span class=p>)(</span><span class=nx>count</span> <span class=kt>int</span><span class=p>,</span><span class=nx>err</span> <span class=nx>Error</span><span class=p>){</span>
+    <span class=nx>resp</span><span class=p>,</span><span class=nx>err</span> <span class=o>:=</span> <span class=nx>http</span><span class=p>.</span><span class=nf>Get</span><span class=p>(</span><span class=nx>url</span><span class=p>)</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span><span class=kc>nil</span> <span class=p>{</span>
+        <span class=k>return</span> 
+    <span class=p>}</span>
+    <span class=k>defer</span> <span class=nx>resp</span><span class=p>.</span><span class=nx>Body</span><span class=p>.</span><span class=nf>Close</span><span class=p>()</span>
+    <span class=c1>// Parse html and count images
+</span><span class=c1></span>    <span class=nx>count</span> <span class=p>=</span> <span class=mi>10</span>
+    <span class=k>return</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>(){</span>
+  <span class=nx>url</span> <span class=o>:=</span> <span class=s>&#34;https://unsplash.com/t/nature&#34;</span>
+  <span class=k>if</span> <span class=nx>count</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nf>CountImages</span><span class=p>(</span><span class=nx>url</span><span class=p>);</span> <span class=nx>err</span> <span class=o>!=</span><span class=kc>nil</span> <span class=p>{</span>
+    <span class=nx>log</span><span class=p>.</span><span class=nf>Fatal</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span>
+  <span class=p>}</span><span class=k>else</span><span class=p>{</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;The page of %v has %v images.\n&#34;</span><span class=p>,</span> <span class=nx>url</span><span class=p>,</span> <span class=nx>count</span><span class=p>)</span>
+  <span class=p>}</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>在上面的例子中，如果函数只返回一个值，当返回值为0时，我们不能确定这个零值是有效的统计结果还是请求 <em>url</em> 时发生异常导致的。因此，返回值多一个 <em>error</em> ，我们就可以根据 <em>err</em> 这个返回值是否为 <em>nil</em> 判断函数执行是否成功。</p><p>如果函数明确的只有一种可能的错误，那么不返回 <em>Error</em> 也可以，此时你可以用 <em>boolean</em> 值 <em>ok</em> 代替即可。例如下面的例子。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=k>if</span> <span class=nx>value</span><span class=p>,</span> <span class=nx>ok</span> <span class=o>:=</span> <span class=nx>cache</span><span class=p>.</span><span class=nf>Lookup</span><span class=p>(</span><span class=nx>key</span><span class=p>);</span> <span class=p>!</span><span class=nx>ok</span><span class=p>{</span>
+    <span class=c1>// cacke&#39;s key does not exist...
+</span><span class=c1></span><span class=p>}</span><span class=k>else</span><span class=p>{</span>
+    <span class=c1>// do something by the value...
+</span><span class=c1></span><span class=p>}</span>
+</code></pre></td></tr></table></div></div><h2 id=3-函数变量和匿名函数>3. 函数变量和匿名函数</h2><h3 id=31-函数变量>3.1 函数变量</h3><p>在 <em>Go</em> 中函数是一等公民，与其它类型一样，函数可以作为类型使用。你可以声明一个函数类型的变量，或者做为函数参数，在函数间传递。</p><ul><li><p>函数类型的变量</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+  
+<span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
+  
+<span class=kd>func</span> <span class=nf>square</span><span class=p>(</span><span class=nx>n</span> <span class=kt>int</span><span class=p>)</span> <span class=kt>int</span> <span class=p>{</span>
+	<span class=k>return</span> <span class=nx>n</span> <span class=o>*</span> <span class=nx>n</span>
+<span class=p>}</span>
+  
+<span class=kd>func</span> <span class=nf>negative</span><span class=p>(</span><span class=nx>n</span> <span class=kt>int</span><span class=p>)</span> <span class=kt>int</span> <span class=p>{</span>
+	<span class=k>return</span> <span class=o>-</span><span class=nx>n</span>
+<span class=p>}</span>
+  
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+	<span class=kd>var</span> <span class=nx>f</span> <span class=kd>func</span><span class=p>(</span><span class=kt>int</span><span class=p>)</span> <span class=kt>int</span>
+	<span class=nx>n</span> <span class=o>:=</span> <span class=mi>3</span>
+	<span class=nx>f</span> <span class=p>=</span> <span class=nx>square</span>
+	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;The square of %v is:%v\n&#34;</span><span class=p>,</span> <span class=nx>n</span><span class=p>,</span> <span class=nf>f</span><span class=p>(</span><span class=mi>3</span><span class=p>))</span>
+	<span class=nx>f</span> <span class=p>=</span> <span class=nx>negative</span>
+	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;The negative of %v is:%v\n&#34;</span><span class=p>,</span> <span class=nx>n</span><span class=p>,</span> <span class=nf>f</span><span class=p>(</span><span class=mi>3</span><span class=p>))</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div></li><li><p>函数类型的参数</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+  
+<span class=kn>import</span> <span class=p>(</span>
+	<span class=s>&#34;fmt&#34;</span>
+	<span class=s>&#34;sort&#34;</span>
+<span class=p>)</span>
+  
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+	<span class=nx>students</span> <span class=o>:=</span> <span class=p>[]</span><span class=kd>struct</span> <span class=p>{</span>
+      <span class=nx>Name</span>  <span class=kt>string</span>
+      <span class=nx>Score</span> <span class=kt>float64</span>
+	<span class=p>}{</span>
+      <span class=p>{</span><span class=s>&#34;Tom&#34;</span><span class=p>,</span> <span class=mf>99.0</span><span class=p>},</span>
+      <span class=p>{</span><span class=s>&#34;Jack&#34;</span><span class=p>,</span> <span class=mf>45.0</span><span class=p>},</span>
+      <span class=p>{</span><span class=s>&#34;Pony&#34;</span><span class=p>,</span> <span class=mi>100</span><span class=p>},</span>
+      <span class=p>{</span><span class=s>&#34;Kitty&#34;</span><span class=p>,</span> <span class=mi>100</span><span class=p>},</span>
+	<span class=p>}</span>
+	<span class=nx>sortByScore</span> <span class=o>:=</span> <span class=kd>func</span><span class=p>(</span><span class=nx>i</span><span class=p>,</span> <span class=nx>j</span> <span class=kt>int</span><span class=p>)</span> <span class=kt>bool</span> <span class=p>{</span>
+      <span class=k>return</span> <span class=nx>students</span><span class=p>[</span><span class=nx>i</span><span class=p>].</span><span class=nx>Score</span> <span class=p>&lt;</span> <span class=nx>students</span><span class=p>[</span><span class=nx>j</span><span class=p>].</span><span class=nx>Score</span>
+	<span class=p>}</span>
+	<span class=nx>sort</span><span class=p>.</span><span class=nf>Slice</span><span class=p>(</span><span class=nx>students</span><span class=p>,</span> <span class=nx>sortByScore</span><span class=p>)</span>
+	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;Sorted by score asc:%v\n&#34;</span><span class=p>,</span> <span class=nx>students</span><span class=p>)</span>
+	<span class=nx>sort</span><span class=p>.</span><span class=nf>Slice</span><span class=p>(</span><span class=nx>students</span><span class=p>,</span> <span class=kd>func</span><span class=p>(</span><span class=nx>i</span><span class=p>,</span> <span class=nx>j</span> <span class=kt>int</span><span class=p>)</span> <span class=kt>bool</span> <span class=p>{</span>
+      <span class=k>return</span> <span class=nx>students</span><span class=p>[</span><span class=nx>i</span><span class=p>].</span><span class=nx>Name</span> <span class=p>&lt;</span> <span class=nx>students</span><span class=p>[</span><span class=nx>j</span><span class=p>].</span><span class=nx>Name</span>
+	<span class=p>})</span>
+	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;Sorted by name asc:%v\n&#34;</span><span class=p>,</span> <span class=nx>students</span><span class=p>)</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>上面的例子很清晰的展示了函数类型的变量、参数是如何声明和使用的。既然可以声明函数类型的变量或参数，那它的零值是什么？没错，就是 <em>nil</em> 。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kd>var</span> <span class=nx>f</span> <span class=kd>func</span> <span class=p>(</span><span class=kt>int</span><span class=p>)</span> <span class=kt>int</span>
+<span class=k>if</span> <span class=nx>f</span> <span class=o>!=</span><span class=kc>nil</span> <span class=p>{</span>
+  <span class=nf>f</span><span class=p>(</span><span class=mi>3</span><span class=p>)</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>虽然可以与 <em>nil</em> 比较判断，但函数类型的变量是不能作为 <em>map</em> 键值的。因为函数类型的变量之间是不能做比较的。</p><p>也许你从上面的例子中看到了一个没有函数名字的函数类型的参数，没错它就是我们下面讲的内容：<strong>匿名函数</strong>。</p></li></ul><h3 id=32-匿名函数>3.2 匿名函数</h3><p>匿名函数，顾名思义就是没有函数名仅有函数体的函数。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=nx>strings</span><span class=p>.</span><span class=nf>Map</span><span class=p>(</span><span class=kd>func</span><span class=p>(</span><span class=nx>r</span> <span class=kt>rune</span><span class=p>)</span><span class=kt>rune</span><span class=p>{</span><span class=k>return</span> <span class=nx>r</span> <span class=o>+</span><span class=mi>1</span><span class=p>},</span> <span class=s>&#34;Hello&#34;</span><span class=p>)</span>
+</code></pre></td></tr></table></div></div><p>似乎很简单，那看下面这个例子，尝试写下输出结果是啥</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=p>(</span>
+	<span class=s>&#34;fmt&#34;</span>
+<span class=p>)</span>
+
+<span class=kd>func</span> <span class=nf>square</span><span class=p>()</span> <span class=kd>func</span><span class=p>()</span> <span class=kt>int</span> <span class=p>{</span>
+	<span class=kd>var</span> <span class=nx>x</span> <span class=kt>int</span>
+	<span class=k>return</span> <span class=kd>func</span><span class=p>()</span> <span class=kt>int</span> <span class=p>{</span>
+		<span class=nx>x</span><span class=o>++</span>
+		<span class=k>return</span> <span class=nx>x</span> <span class=o>*</span> <span class=nx>x</span>
+	<span class=p>}</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>(){</span>
+  <span class=nx>f</span> <span class=o>:=</span> <span class=nf>square</span><span class=p>()</span>
+  <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nf>f</span><span class=p>(),</span><span class=nf>f</span><span class=p>(),</span><span class=nf>f</span><span class=p>())</span>
+  <span class=c1>// 1, 4, 9
+</span><span class=c1></span><span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>为什么是这个结果呢？因为内部的匿名函数引用了外部的局部变量，导致函数 <em>squar</em> 调用完成时，变量 <em>x</em> 依旧有效 。换句话说，就是函数 <em>f</em> 不仅有逻辑还有了状态。其实这就是 <em>闭包</em> ，这在 <em>Go</em> 编程常被使用。下面我们看一个枚举作用域内闭包的例子。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kd>var</span> <span class=nx>rmdirs</span> <span class=p>[]</span><span class=kd>func</span><span class=p>()</span>
+<span class=nx>tempDirs</span> <span class=o>:=</span> <span class=p>[]</span><span class=kt>string</span><span class=p>{</span><span class=s>&#34;one&#34;</span><span class=p>,</span> <span class=s>&#34;two&#34;</span><span class=p>,</span> <span class=s>&#34;three&#34;</span><span class=p>,</span> <span class=s>&#34;four&#34;</span><span class=p>}</span>
+	<span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>d</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>tempDirs</span> <span class=p>{</span>
+    <span class=nx>dir</span> <span class=o>:=</span> <span class=nx>d</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;create directory %v\n&#34;</span><span class=p>,</span> <span class=nx>dir</span><span class=p>)</span>
+    <span class=nx>rmdirs</span> <span class=p>=</span> <span class=nb>append</span><span class=p>(</span><span class=nx>rmdirs</span><span class=p>,</span> <span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;remove directory %v\n&#34;</span><span class=p>,</span> <span class=nx>dir</span><span class=p>)</span>
+    <span class=p>})</span>
+<span class=p>}</span>
+<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;---&#34;</span><span class=p>)</span>
+
+<span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>f</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>rmdirs</span> <span class=p>{</span>
+    <span class=nf>f</span><span class=p>()</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>你可能会疑惑为什么要把循环变量赋值给循环体内的本地变量呢？OK，那我们按照这个思路改下上面的例子。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kd>var</span> <span class=nx>rmdirs</span> <span class=p>[]</span><span class=kd>func</span><span class=p>()</span>
+<span class=nx>tempDirs</span> <span class=o>:=</span> <span class=p>[]</span><span class=kt>string</span><span class=p>{</span><span class=s>&#34;one&#34;</span><span class=p>,</span> <span class=s>&#34;two&#34;</span><span class=p>,</span> <span class=s>&#34;three&#34;</span><span class=p>,</span> <span class=s>&#34;four&#34;</span><span class=p>}</span>
+	<span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>d</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>tempDirs</span> <span class=p>{</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;create directory %v\n&#34;</span><span class=p>,</span> <span class=nx>d</span><span class=p>)</span>
+    <span class=nx>rmdirs</span> <span class=p>=</span> <span class=nb>append</span><span class=p>(</span><span class=nx>rmdirs</span><span class=p>,</span> <span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
+        <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;remove directory %v\n&#34;</span><span class=p>,</span> <span class=nx>d</span><span class=p>)</span>
+    <span class=p>})</span>
+<span class=p>}</span>
+<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;---&#34;</span><span class=p>)</span>
+
+<span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>f</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>rmdirs</span> <span class=p>{</span>
+    <span class=nf>f</span><span class=p>()</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>看看这个两个列子结果<a href=https://play.golang.org/p/9rG8hCx-EbR>例子1</a>和<a href=https://play.golang.org/p/Xo1RqtNKrC0>例子2</a>，结果竟然不一致。为什么呢？这里需要注意的是循环体的局部变量 <em>d</em> 是被重复使用的，也就说每次枚举赋值时使用的同一内存地址，所以匿名函数内的 <em>d</em> 是同一个内存地址，所以循环结束时，<em>d</em> 被更新为最后一个值，最终导致执行匿名函数的时结果与第一个例子不一致。</p><p>参考文章</p><p><a href=https://learning.oreilly.com/library/view/the-go-programming/9780134190570/ebook_split_047.html>Anonymous Function</a></p><p><a href=https://github.com/golang/go/wiki/CommonMistakes>CommonMistakes · golang/go Wiki (github.com)</a></p><p><a href=https://golang.org/ref/spec#For_statements>The Go Programming Language Specification#For_statements</a></p></div><div class=post-copyright><p class=copyright-item><span class=item-title>文章作者</span>
+<span class=item-content>Shawn</span></p><p class=copyright-item><span class=item-title>上次更新</span>
+<span class=item-content>2021-04-28</span></p><p class=copyright-item><span class=item-title>许可协议</span>
+<span class=item-content>版权声明：自由转载-非商用-非衍生-保持署名（<a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh target=_blank>CC BY-NC-ND 4.0</a>）</span></p></div><footer class=post-footer><div class=post-tags><a href=/tags/go/>Go</a>
+<a href=/tags/%E6%95%99%E7%A8%8B/>教程</a></div><nav class=post-nav><a class=next href=/post/go/go%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-09/><span class="next-text nav-default">Go学习笔记 09</span>
+<span class="next-text nav-mobile">下一篇</span>
+<i class="iconfont icon-right"></i></a></nav></footer></article></div><script src=https://utteranc.es/client.js repo=erheisw/blog-comments issue-term=pathname theme=github-light crossorigin=anonymous async></script><noscript>Please enable JavaScript to view the <a href=https://github.com/utterance>comments powered by utterances.</a></noscript></div></main><footer id=footer class=footer><div class=social-links><a href=https://twitter.com/erheishao class="iconfont icon-twitter" title=twitter></a><a href=https://github.com/erheisw class="iconfont icon-github" title=github></a><a href=https://erheisw.github.io/index.xml type=application/rss+xml class="iconfont icon-rss" title=rss></a></div><div class=copyright><span class=power-by>由 <a class=hexo-link href=https://gohugo.io>Hugo</a> 强力驱动</span>
+<span class=division>|</span>
+<span class=theme-info>主题 -
+<a class=theme-link href=https://github.com/olOwOlo/hugo-theme-even>Even</a></span><div class=busuanzi-footer><span id=busuanzi_container_site_pv>本站总访问量 <span id=busuanzi_value_site_pv><img src=/img/spinner.svg alt=spinner.svg></span> 次</span>
+<span class=division>|</span>
+<span id=busuanzi_container_site_uv>本站总访客数 <span id=busuanzi_value_site_uv><img src=/img/spinner.svg alt=spinner.svg></span> 人</span></div><span class=copyright-year>&copy;
+2020 -
+2021
+<span class=heart><i class="iconfont icon-heart"></i></span>
+<span class=author>Shawn</span></span></div></footer><div class=back-to-top id=back-to-top><i class="iconfont icon-up"></i></div></div><script src=https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin=anonymous></script><script src=https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin=anonymous></script><script src=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin=anonymous></script><script type=text/javascript src=/js/main.min.2517c0eb67172a0bae917de4af59b10ca2531411a009d4c0b82f5685259e5771.js></script></body></html>
