@@ -1,5 +1,5 @@
-<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><title>Go学习笔记 08 - Shawn的木屋</title><meta name=renderer content="webkit"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=cache-control content="no-transform"><meta http-equiv=cache-control content="no-siteapp"><meta name=theme-color content="#f8f5ec"><meta name=msapplication-navbutton-color content="#f8f5ec"><meta name=apple-mobile-web-app-capable content="yes"><meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec"><meta name=author content="Shawn"><meta name=description content="Go学习笔记-08"><meta name=keywords content="for,switch,for...range,defer,goto,Go"><meta name=generator content="Hugo 0.82.1 with theme even"><link rel=canonical href=https://erheisw.github.io/post/go/go%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-08/><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/manifest.json><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script><link href=/sass/main.min.8c3cbcb0324c2bb4875ceccba4007cbad4b4ac8377f33af9953c3e7684534a50.css rel=stylesheet><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous><meta property="og:title" content="Go学习笔记 08"><meta property="og:description" content="Go学习笔记-08"><meta property="og:type" content="article"><meta property="og:url" content="https://erheisw.github.io/post/go/go%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-08/"><meta property="article:section" content="post"><meta property="article:published_time" content="2021-04-23T20:12:00+08:00"><meta property="article:modified_time" content="2021-04-23T20:12:00+08:00"><meta itemprop=name content="Go学习笔记 08"><meta itemprop=description content="Go学习笔记-08"><meta itemprop=datePublished content="2021-04-23T20:12:00+08:00"><meta itemprop=dateModified content="2021-04-23T20:12:00+08:00"><meta itemprop=wordCount content="1906"><meta itemprop=keywords content="Go,教程,"><meta name=twitter:card content="summary"><meta name=twitter:title content="Go学习笔记 08"><meta name=twitter:description content="Go学习笔记-08"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script><script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]--></head><body><div id=mobile-navbar class=mobile-navbar><div class=mobile-header-logo><a href=/ class=logo>Shawn的木屋</a></div><div class=mobile-navbar-icon><span></span><span></span><span></span></div></div><nav id=mobile-menu class="mobile-menu slideout-menu"><ul class=mobile-menu-list><a href=/><li class=mobile-menu-item>首页</li></a><a href=/post/><li class=mobile-menu-item>归档</li></a><a href=/categories/><li class=mobile-menu-item>分类</li></a><a href=/tags/><li class=mobile-menu-item>标签</li></a><a href=/about/><li class=mobile-menu-item>关于我</li></a></ul></nav><div class=container id=mobile-panel><header id=header class=header><div class=logo-wrapper><a href=/ class=logo>Shawn的木屋</a></div><nav class=site-navbar><ul id=menu class=menu><li class=menu-item><a class=menu-item-link href=/>首页</a></li><li class=menu-item><a class=menu-item-link href=/post/>归档</a></li><li class=menu-item><a class=menu-item-link href=/categories/>分类</a></li><li class=menu-item><a class=menu-item-link href=/tags/>标签</a></li><li class=menu-item><a class=menu-item-link href=/about/>关于我</a></li></ul></nav></header><main id=main class=main><div class=content-wrapper><div id=content class=content><article class=post><header class=post-header><h1 class=post-title>Go学习笔记 08</h1><div class=post-meta><span class=post-time>2021-04-23</span><div class=post-category><a href=/categories/%E6%8A%80%E6%9C%AF/>技术</a>
-<a href=/categories/%E7%AC%94%E8%AE%B0/>笔记</a></div><span class=more-meta>约 1906 字</span>
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><title>Go学习笔记 08 - Shawn的木屋</title><meta name=renderer content="webkit"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=cache-control content="no-transform"><meta http-equiv=cache-control content="no-siteapp"><meta name=theme-color content="#f8f5ec"><meta name=msapplication-navbutton-color content="#f8f5ec"><meta name=apple-mobile-web-app-capable content="yes"><meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec"><meta name=author content="Shawn"><meta name=description content="Go学习笔记-08"><meta name=keywords content="for,switch,for...range,defer,goto,Go"><meta name=generator content="Hugo 0.83.1 with theme even"><link rel=canonical href=https://erheisw.github.io/post/go/go%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-08/><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/manifest.json><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script><link href=/sass/main.min.8c3cbcb0324c2bb4875ceccba4007cbad4b4ac8377f33af9953c3e7684534a50.css rel=stylesheet><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous><meta property="og:title" content="Go学习笔记 08"><meta property="og:description" content="Go学习笔记-08"><meta property="og:type" content="article"><meta property="og:url" content="https://erheisw.github.io/post/go/go%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-08/"><meta property="article:section" content="post"><meta property="article:published_time" content="2021-04-23T20:12:00+08:00"><meta property="article:modified_time" content="2021-04-23T20:12:00+08:00"><meta itemprop=name content="Go学习笔记 08"><meta itemprop=description content="Go学习笔记-08"><meta itemprop=datePublished content="2021-04-23T20:12:00+08:00"><meta itemprop=dateModified content="2021-04-23T20:12:00+08:00"><meta itemprop=wordCount content="1565"><meta itemprop=keywords content="Go,教程,"><meta name=twitter:card content="summary"><meta name=twitter:title content="Go学习笔记 08"><meta name=twitter:description content="Go学习笔记-08"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script><script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]--></head><body><div id=mobile-navbar class=mobile-navbar><div class=mobile-header-logo><a href=/ class=logo>Shawn的木屋</a></div><div class=mobile-navbar-icon><span></span><span></span><span></span></div></div><nav id=mobile-menu class="mobile-menu slideout-menu"><ul class=mobile-menu-list><a href=/><li class=mobile-menu-item>首页</li></a><a href=/post/><li class=mobile-menu-item>归档</li></a><a href=/categories/><li class=mobile-menu-item>分类</li></a><a href=/tags/><li class=mobile-menu-item>标签</li></a><a href=/about/><li class=mobile-menu-item>关于我</li></a></ul></nav><div class=container id=mobile-panel><header id=header class=header><div class=logo-wrapper><a href=/ class=logo>Shawn的木屋</a></div><nav class=site-navbar><ul id=menu class=menu><li class=menu-item><a class=menu-item-link href=/>首页</a></li><li class=menu-item><a class=menu-item-link href=/post/>归档</a></li><li class=menu-item><a class=menu-item-link href=/categories/>分类</a></li><li class=menu-item><a class=menu-item-link href=/tags/>标签</a></li><li class=menu-item><a class=menu-item-link href=/about/>关于我</a></li></ul></nav></header><main id=main class=main><div class=content-wrapper><div id=content class=content><article class=post><header class=post-header><h1 class=post-title>Go学习笔记 08</h1><div class=post-meta><span class=post-time>2021-04-23</span><div class=post-category><a href=/categories/%E6%8A%80%E6%9C%AF/>技术</a>
+<a href=/categories/%E7%AC%94%E8%AE%B0/>笔记</a></div><span class=more-meta>约 1565 字</span>
 <span class=more-meta>预计阅读 4 分钟</span>
 <span id=busuanzi_container_page_pv class=more-meta><span id=busuanzi_value_page_pv><img src=/img/spinner.svg alt=spinner.svg></span> 次阅读</span></div></header><div class=post-toc id=post-toc><h2 class=post-toc-title>文章目录</h2><div class="post-toc-content always-active"><nav id=TableOfContents><ul><li><a href=#1-唯一的循环for>1. 唯一的循环——for</a></li><li><a href=#2-流程控制if-else>2. 流程控制——if-else</a></li><li><a href=#3-流程控制switch>3. 流程控制——switch</a></li><li><a href=#4-延迟调用defer>4. 延迟调用——defer</a></li><li><a href=#5-无条件跳转goto>5. 无条件跳转：goto</a></li></ul></nav></div></div><div class=post-content><p>前面的章节介绍了大部分常用的数据类型，这些数据类型基本能满足我们变成练习了。但还缺少些必要的逻辑控制，本章节将会介绍 <em>Go</em> 中流程控制相关的内容。</p><h2 id=1-唯一的循环for>1. 唯一的循环——for</h2><p><em>Go</em> 中只有一种循环：for，它的基本格式由3部分构成：</p><ul><li>初始化，在第一次循环前执行，一般用作声明初始化变量，并且变量的作用域仅限于 for</li><li>条件表达式，每次循环前执行，如果为真则继续执行，否则退出循环</li><li>循环后执行的语句声明，在每次循环后执行</li></ul><p>上面的描述有些抽象，直接看代码吧。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
@@ -35,9 +35,9 @@
 </span><span class=lnt>10
 </span><span class=lnt>11
 </span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
-  
+
 <span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
-  
+
 <span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
 	<span class=nx>sum</span> <span class=o>:=</span> <span class=mi>1</span>
 	<span class=k>for</span> <span class=p>;</span> <span class=nx>sum</span> <span class=p>&lt;</span> <span class=mi>1000</span><span class=p>;</span> <span class=p>{</span>
@@ -57,9 +57,9 @@
 </span><span class=lnt>10
 </span><span class=lnt>11
 </span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
-  
+
 <span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
-  
+
 <span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
 	<span class=nx>sum</span> <span class=o>:=</span> <span class=mi>1</span>
 	<span class=k>for</span> <span class=nx>sum</span> <span class=p>&lt;</span> <span class=mi>1000</span> <span class=p>{</span>
@@ -77,9 +77,9 @@
 </span><span class=lnt>8
 </span><span class=lnt>9
 </span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
-  
+
 <span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
-  
+
 <span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
 	<span class=k>for</span> <span class=p>{</span>
       <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=mi>1</span><span class=p>)</span>
@@ -96,9 +96,9 @@
 </span><span class=lnt> 9
 </span><span class=lnt>10
 </span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
-  
+
 <span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
-  
+
 <span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
 	<span class=nx>arr</span> <span class=o>:=</span> <span class=p>[</span><span class=o>...</span><span class=p>]</span><span class=kt>string</span><span class=p>{</span><span class=s>&#34;world&#34;</span><span class=p>,</span> <span class=s>&#34;java&#34;</span><span class=p>,</span> <span class=s>&#34;go&#34;</span><span class=p>}</span>
 	<span class=k>for</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>item</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>arr</span> <span class=p>{</span>
@@ -117,16 +117,16 @@
 </span><span class=lnt>10
 </span><span class=lnt>11
 </span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
-  
+
 <span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
-  
+
 <span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
 	<span class=nx>age</span> <span class=o>:=</span> <span class=mi>10</span>
 	<span class=k>if</span> <span class=nx>age</span> <span class=p>&lt;</span> <span class=mi>18</span> <span class=p>{</span>
       <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;He is not adult because his age is only %d.\n&#34;</span><span class=p>,</span> <span class=nx>age</span><span class=p>)</span>
 	<span class=p>}</span>
 <span class=p>}</span>
-  
+
 </code></pre></td></tr></table></div></div></li><li><p>多分支判断——if-else</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
@@ -141,9 +141,9 @@
 </span><span class=lnt>12
 </span><span class=lnt>13
 </span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
-  
+
 <span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
-  
+
 <span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
 	<span class=nx>age</span> <span class=o>:=</span> <span class=mi>10</span>
 	<span class=k>if</span> <span class=nx>age</span> <span class=p>&lt;</span> <span class=mi>18</span> <span class=p>{</span>
@@ -152,7 +152,7 @@
       <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;He is adult because his age is only %d.\n&#34;</span><span class=p>,</span> <span class=nx>age</span><span class=p>)</span>
 	<span class=p>}</span>
 <span class=p>}</span>
-  
+
 </code></pre></td></tr></table></div></div></li><li><p>多分支判断——if-else if-else</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
 </span><span class=lnt> 2
 </span><span class=lnt> 3
@@ -170,9 +170,9 @@
 </span><span class=lnt>15
 </span><span class=lnt>16
 </span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
-  
+
 <span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
-  
+
 <span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
 	<span class=nx>age</span> <span class=o>:=</span> <span class=mi>10</span>
 	<span class=k>if</span> <span class=nx>age</span> <span class=p>&lt;</span> <span class=mi>5</span> <span class=p>{</span>
@@ -201,9 +201,9 @@
 </span><span class=lnt>14
 </span><span class=lnt>15
 </span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
-  
+
 <span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
-  
+
 <span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
 	<span class=k>if</span> <span class=nx>age</span> <span class=o>:=</span> <span class=mi>10</span><span class=p>;</span> <span class=nx>age</span> <span class=p>&lt;</span> <span class=mi>5</span> <span class=p>{</span>
       <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;He is baby because his age is only %d.\n&#34;</span><span class=p>,</span> <span class=nx>age</span><span class=p>)</span>
@@ -262,12 +262,12 @@
 </span><span class=lnt>17
 </span><span class=lnt>18
 </span><span class=lnt>19
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go>  
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go>
 <span class=kn>import</span> <span class=p>(</span>
 	<span class=s>&#34;fmt&#34;</span>
 	<span class=s>&#34;runtime&#34;</span>
 <span class=p>)</span>
-  
+
 <span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
 	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Print</span><span class=p>(</span><span class=s>&#34;Go runs on &#34;</span><span class=p>)</span>
 	<span class=k>switch</span> <span class=nx>os</span> <span class=o>:=</span> <span class=nx>runtime</span><span class=p>.</span><span class=nx>GOOS</span><span class=p>;</span> <span class=nx>os</span> <span class=p>{</span>
@@ -300,12 +300,12 @@
 </span><span class=lnt>17
 </span><span class=lnt>18
 </span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
-  
+
 <span class=kn>import</span> <span class=p>(</span>
 	<span class=s>&#34;fmt&#34;</span>
 	<span class=s>&#34;time&#34;</span>
 <span class=p>)</span>
-  
+
 <span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
 	<span class=nx>t</span> <span class=o>:=</span> <span class=nx>time</span><span class=p>.</span><span class=nf>Now</span><span class=p>()</span>
 	<span class=k>switch</span> <span class=p>{</span>
@@ -338,12 +338,12 @@
 </span><span class=lnt>19
 </span><span class=lnt>20
 </span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
-  
+
 <span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
-  
+
 <span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
 	<span class=nx>month</span> <span class=o>:=</span> <span class=mi>2</span>
-  
+
 	<span class=k>switch</span> <span class=nx>month</span> <span class=p>{</span>
 	<span class=k>case</span> <span class=mi>1</span><span class=p>,</span> <span class=mi>2</span><span class=p>,</span> <span class=mi>3</span><span class=p>:</span>
       <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;The first Quart&#34;</span><span class=p>)</span>
@@ -372,9 +372,9 @@
 </span><span class=lnt>13
 </span><span class=lnt>14
 </span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
-  
+
 <span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
-  
+
 <span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
 	<span class=nx>s</span> <span class=o>:=</span> <span class=s>&#34;hello&#34;</span>
 	<span class=k>switch</span> <span class=p>{</span>
@@ -385,97 +385,7 @@
       <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;world&#34;</span><span class=p>)</span>
 	<span class=p>}</span>
 <span class=p>}</span>
-</code></pre></td></tr></table></div></div></li></ul><h2 id=4-延迟调用defer>4. 延迟调用——defer</h2><p><em>Go</em> 语言中有一个独有的关键字：defer，它表示的是延迟调用，即将 <em>defer</em> 后面的函数延迟到当前函数执行完后再执行。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
-
-<span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
-
-<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
-	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;counting&#34;</span><span class=p>)</span>
-
-	<span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=p>&lt;</span> <span class=mi>10</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
-		<span class=k>defer</span> <span class=kd>func</span><span class=p>(</span><span class=nx>j</span> <span class=kt>int</span><span class=p>)</span> <span class=p>{</span> <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>j</span><span class=p>)</span> <span class=p>}(</span><span class=nx>i</span><span class=p>)</span>
-	<span class=p>}</span>
-
-	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;done&#34;</span><span class=p>)</span>
-<span class=p>}</span>
-
-</code></pre></td></tr></table></div></div><p>你可以先猜下输出结果，是否与下面的一致呢。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-shell data-lang=shell>counting
-<span class=k>done</span>
-<span class=m>9</span>
-<span class=m>8</span>
-<span class=m>7</span>
-<span class=m>6</span>
-<span class=m>5</span>
-<span class=m>4</span>
-<span class=m>3</span>
-<span class=m>2</span>
-<span class=m>1</span>
-<span class=m>0</span>
-</code></pre></td></tr></table></div></div><p><em>defer</em> 的作用，主要是可以将资源清理：文件关闭、socket连接断开等这类操作延迟到最后，即使是该代码块panic，也可以正常的释放这些资源。其实到这，你会发现 <em>defer</em> 与数据结构 <em>stack</em> 类似。没错，你可以把 <em>defer</em> 所在的函数当成一个 <em>stack</em> ，<em>defer</em> 语句是第一个入栈的，所以它是最后执行的。</p><p>那么我们想下这个问题：函数中的同时有 <em>defer</em> 和 <em>return</em> 这两个关键字，执行顺序是什么呢？defer 是最后执行的么？运行下下面的代码，看看结果是你想的么？</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
-</span><span class=lnt> 2
-</span><span class=lnt> 3
-</span><span class=lnt> 4
-</span><span class=lnt> 5
-</span><span class=lnt> 6
-</span><span class=lnt> 7
-</span><span class=lnt> 8
-</span><span class=lnt> 9
-</span><span class=lnt>10
-</span><span class=lnt>11
-</span><span class=lnt>12
-</span><span class=lnt>13
-</span><span class=lnt>14
-</span><span class=lnt>15
-</span><span class=lnt>16
-</span><span class=lnt>17
-</span><span class=lnt>18
-</span><span class=lnt>19
-</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
-
-<span class=kn>import</span> <span class=s>&#34;fmt&#34;</span>
-
-<span class=kd>var</span> <span class=nx>drink</span> <span class=p>=</span> <span class=s>&#34;coka cola&#34;</span>
-
-<span class=kd>func</span> <span class=nf>change</span><span class=p>()</span> <span class=kt>string</span> <span class=p>{</span>
-	<span class=k>defer</span> <span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
-		<span class=nx>drink</span> <span class=p>=</span> <span class=s>&#34;sprite&#34;</span>
-	<span class=p>}()</span>
-	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;change drink to  &#34;</span><span class=p>,</span> <span class=nx>drink</span><span class=p>)</span>
-	<span class=k>return</span> <span class=nx>drink</span>
-<span class=p>}</span>
-
-<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
-	<span class=nx>d</span> <span class=o>:=</span> <span class=nf>change</span><span class=p>()</span>
-	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;return drink &#34;</span><span class=p>,</span> <span class=nx>d</span><span class=p>)</span>
-	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;defer drink &#34;</span><span class=p>,</span> <span class=nx>drink</span><span class=p>)</span>
-<span class=p>}</span>
-</code></pre></td></tr></table></div></div><h2 id=5-无条件跳转goto>5. 无条件跳转：goto</h2><p><em>Go</em> 语言中有一个特殊的关键字：goto，它是一个没有任何条件限制的跳转控制。跟 <em>for</em> 、<em>switch</em> 不同，它不需要任何限制条件就可以跳转到同一函数内声明的 <em>label</em> 出。其语法如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</code></pre></td></tr></table></div></div></li></ul><h2 id=4-延迟调用defer>4. 延迟调用——defer</h2><p><em>Go</em> 语言中有一个独有的关键字：defer，它表示的是延迟调用，即将 <em>defer</em> 后面的函数延迟到当前函数执行完后再执行。具体请看<a href=post/go/go%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-11/>这篇</a></p><h2 id=5-无条件跳转goto>5. 无条件跳转：goto</h2><p><em>Go</em> 语言中有一个特殊的关键字：goto，它是一个没有任何条件限制的跳转控制。跟 <em>for</em> 、<em>switch</em> 不同，它不需要任何限制条件就可以跳转到同一函数内声明的 <em>label</em> 出。其语法如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
 </span><span class=lnt>2
 </span><span class=lnt>3
 </span><span class=lnt>4

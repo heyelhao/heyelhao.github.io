@@ -1,0 +1,339 @@
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><title>Go学习笔记 11 - Shawn的木屋</title><meta name=renderer content="webkit"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=cache-control content="no-transform"><meta http-equiv=cache-control content="no-siteapp"><meta name=theme-color content="#f8f5ec"><meta name=msapplication-navbutton-color content="#f8f5ec"><meta name=apple-mobile-web-app-capable content="yes"><meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec"><meta name=author content="Shawn"><meta name=description content="Go学习笔记-11"><meta name=keywords content="Function,Defer,Panic,Recover"><meta name=generator content="Hugo 0.83.1 with theme even"><link rel=canonical href=https://erheisw.github.io/post/go/go%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-11/><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/manifest.json><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script><link href=/sass/main.min.8c3cbcb0324c2bb4875ceccba4007cbad4b4ac8377f33af9953c3e7684534a50.css rel=stylesheet><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous><meta property="og:title" content="Go学习笔记 11"><meta property="og:description" content="Go学习笔记-11"><meta property="og:type" content="article"><meta property="og:url" content="https://erheisw.github.io/post/go/go%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-11/"><meta property="article:section" content="post"><meta property="article:published_time" content="2021-05-06T11:17:59+08:00"><meta property="article:modified_time" content="2021-05-06T11:17:59+08:00"><meta itemprop=name content="Go学习笔记 11"><meta itemprop=description content="Go学习笔记-11"><meta itemprop=datePublished content="2021-05-06T11:17:59+08:00"><meta itemprop=dateModified content="2021-05-06T11:17:59+08:00"><meta itemprop=wordCount content="1753"><meta itemprop=keywords content="Go,教程,"><meta name=twitter:card content="summary"><meta name=twitter:title content="Go学习笔记 11"><meta name=twitter:description content="Go学习笔记-11"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script><script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]--></head><body><div id=mobile-navbar class=mobile-navbar><div class=mobile-header-logo><a href=/ class=logo>Shawn的木屋</a></div><div class=mobile-navbar-icon><span></span><span></span><span></span></div></div><nav id=mobile-menu class="mobile-menu slideout-menu"><ul class=mobile-menu-list><a href=/><li class=mobile-menu-item>首页</li></a><a href=/post/><li class=mobile-menu-item>归档</li></a><a href=/categories/><li class=mobile-menu-item>分类</li></a><a href=/tags/><li class=mobile-menu-item>标签</li></a><a href=/about/><li class=mobile-menu-item>关于我</li></a></ul></nav><div class=container id=mobile-panel><header id=header class=header><div class=logo-wrapper><a href=/ class=logo>Shawn的木屋</a></div><nav class=site-navbar><ul id=menu class=menu><li class=menu-item><a class=menu-item-link href=/>首页</a></li><li class=menu-item><a class=menu-item-link href=/post/>归档</a></li><li class=menu-item><a class=menu-item-link href=/categories/>分类</a></li><li class=menu-item><a class=menu-item-link href=/tags/>标签</a></li><li class=menu-item><a class=menu-item-link href=/about/>关于我</a></li></ul></nav></header><main id=main class=main><div class=content-wrapper><div id=content class=content><article class=post><header class=post-header><h1 class=post-title>Go学习笔记 11</h1><div class=post-meta><span class=post-time>2021-05-06</span><div class=post-category><a href=/categories/%E6%8A%80%E6%9C%AF/>技术</a>
+<a href=/categories/%E7%AC%94%E8%AE%B0/>笔记</a></div><span class=more-meta>约 1753 字</span>
+<span class=more-meta>预计阅读 4 分钟</span>
+<span id=busuanzi_container_page_pv class=more-meta><span id=busuanzi_value_page_pv><img src=/img/spinner.svg alt=spinner.svg></span> 次阅读</span></div></header><div class=post-toc id=post-toc><h2 class=post-toc-title>文章目录</h2><div class="post-toc-content always-active"><nav id=TableOfContents><ul><li><a href=#1-deferred-function-call>1. Deferred Function Call</a></li><li><a href=#2-panic--recover>2. Panic & Recover</a><ul><li><a href=#21-触发panic>2.1 触发Panic</a></li><li><a href=#22-recover>2.2 Recover</a></li></ul></li></ul></nav></div></div><div class=post-content><p>在 <strong>Go</strong> 中有一些不常见的流程控制机制：<em>defer</em> 、panic、以及 <em>recover</em>。由于这些内容与函数紧密相关，所以本篇是<a href=/post/go/go%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-10>上篇</a>的续。除此之外，也会涉及 <em>Error</em>、<em>for&mldr;range</em> 等一些内容。由于本人水平有限，本篇不会讨论 <strong>Go</strong> 的异常处理机制等问题。</p><h2 id=1-deferred-function-call>1. Deferred Function Call</h2><p><strong>Defferred Function Call</strong> ，即延迟函数调用。我的理解就是把函数调用存入一个数据结构里，准确的说是栈，当所在函数即将要 <em>return</em> 时，则会将栈里存储的延迟函数依次调用执行，即使函数由 panic 导致的函数中断退出，栈里存储的函数依旧不被影响正常的执行。</p><p><em>Defer</em> 常见的用法是资源清理释放，例如文件打开关闭操作、或网络连接的断开，以及资源锁的锁定释放。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// 文件操作
+</span><span class=c1></span><span class=kd>func</span> <span class=nf>CopyFile</span><span class=p>(</span><span class=nx>destName</span><span class=p>,</span> <span class=nx>srcName</span> <span class=kt>string</span><span class=p>)</span> <span class=p>(</span><span class=nx>written</span> <span class=kt>int64</span><span class=p>,</span> <span class=nx>err</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
+    <span class=nx>src</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>os</span><span class=p>.</span><span class=nf>Open</span><span class=p>(</span><span class=nx>srcName</span><span class=p>)</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=k>return</span>
+    <span class=p>}</span>
+    <span class=k>defer</span> <span class=nx>src</span><span class=p>.</span><span class=nf>Close</span><span class=p>()</span>
+    <span class=nx>dest</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>os</span><span class=p>.</span><span class=nf>Create</span><span class=p>(</span><span class=nx>destName</span><span class=p>)</span>
+  <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=k>return</span>
+  <span class=p>}</span>
+    <span class=k>defer</span> <span class=nx>dest</span><span class=p>.</span><span class=nf>Close</span><span class=p>()</span>
+    <span class=k>return</span> <span class=nx>io</span><span class=p>.</span><span class=nf>Copy</span><span class=p>(</span><span class=nx>dest</span><span class=p>,</span> <span class=nx>src</span><span class=p>)</span>
+<span class=p>}</span>
+<span class=c1>// 网络连接
+</span><span class=c1></span><span class=kd>func</span> <span class=nf>Download</span><span class=p>(</span><span class=nx>fileName</span><span class=p>,</span> <span class=nx>url</span> <span class=kt>string</span><span class=p>)</span> <span class=p>(</span><span class=nx>size</span> <span class=kt>int64</span><span class=p>,</span> <span class=nx>err</span> <span class=kt>error</span><span class=p>){</span>
+    <span class=nx>file</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>os</span><span class=p>.</span><span class=nf>Create</span><span class=p>(</span><span class=nx>fileName</span><span class=p>)</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span><span class=kc>nil</span> <span class=p>{</span>
+        <span class=k>return</span>
+    <span class=p>}</span>
+    <span class=k>defer</span> <span class=nx>file</span><span class=p>.</span><span class=nf>Close</span><span class=p>()</span>
+    <span class=nx>resp</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nx>http</span><span class=p>.</span><span class=nf>Get</span><span class=p>(</span><span class=nx>url</span><span class=p>)</span>
+    <span class=k>if</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+        <span class=k>return</span>
+    <span class=p>}</span>
+    <span class=k>defer</span> <span class=nx>resp</span><span class=p>.</span><span class=nf>Close</span><span class=p>()</span>
+  	<span class=k>return</span> <span class=nx>io</span><span class=p>.</span><span class=nf>Copy</span><span class=p>(</span><span class=nx>file</span><span class=p>,</span> <span class=nx>resp</span><span class=p>)</span>
+<span class=p>}</span>
+<span class=c1>// 资源的锁定释放
+</span><span class=c1></span><span class=kd>var</span> <span class=nx>mu</span> <span class=nx>sync</span><span class=p>.</span><span class=nx>Mutex</span>
+<span class=kd>var</span> <span class=nx>counts</span> <span class=p>=</span> <span class=nb>make</span><span class=p>(</span><span class=kd>map</span><span class=p>[</span><span class=kt>string</span><span class=p>]</span><span class=kt>int</span><span class=p>)</span>
+
+<span class=kd>func</span> <span class=nf>lookup</span><span class=p>(</span><span class=nx>key</span> <span class=kt>string</span><span class=p>)</span> <span class=kt>int</span><span class=p>{</span>
+  <span class=nx>mu</span><span class=p>.</span><span class=nf>Lock</span><span class=p>()</span>
+  <span class=k>defer</span> <span class=nx>mu</span><span class=p>.</span><span class=nf>Unlock</span><span class=p>()</span>
+  <span class=k>return</span> <span class=nx>counts</span><span class=p>[</span><span class=nx>key</span><span class=p>]</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p><em>Defer</em> 声明及语法格式很简单，但有三点值得注意。</p><ol><li><p>延迟的函数调用是以先进后出的顺序执行。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=p>(</span>
+	<span class=s>&#34;fmt&#34;</span>
+<span class=p>)</span>
+
+<span class=kd>func</span> <span class=nf>trace</span><span class=p>(</span><span class=nx>s</span> <span class=kt>string</span><span class=p>)</span> <span class=p>{</span>
+	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;entering&#34;</span><span class=p>,</span> <span class=nx>s</span><span class=p>)</span>
+<span class=p>}</span>
+<span class=kd>func</span> <span class=nf>untrace</span><span class=p>(</span><span class=nx>s</span> <span class=kt>string</span><span class=p>)</span> <span class=p>{</span>
+	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;leaving&#34;</span><span class=p>,</span> <span class=nx>s</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>track</span><span class=p>()</span> <span class=p>{</span>
+	<span class=nx>country</span> <span class=o>:=</span> <span class=s>&#34;China&#34;</span>
+	<span class=k>defer</span> <span class=nf>untrace</span><span class=p>(</span><span class=nx>country</span><span class=p>)</span>
+	<span class=nf>trace</span><span class=p>(</span><span class=nx>country</span><span class=p>)</span>
+	<span class=nx>state</span> <span class=o>:=</span> <span class=s>&#34;Beijing&#34;</span>
+	<span class=k>defer</span> <span class=nf>untrace</span><span class=p>(</span><span class=nx>state</span><span class=p>)</span>
+	<span class=nf>trace</span><span class=p>(</span><span class=nx>state</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+	<span class=nf>track</span><span class=p>()</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>上面例子的输出结果请点击<a href=https://play.golang.org/p/NQ-_YDhMH09>这里</a></p></li><li><p>defer将语句入到栈中时，也会将相关的值拷贝同时入栈</p><p>下面的这个例子，当每次循环执行 <em>defer</em> 语句时，<em>i</em> 表达式的值都会计算出来并一起压入栈，所以输出结果是：3，2，1，0</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=p>(</span>
+	<span class=s>&#34;fmt&#34;</span>
+<span class=p>)</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+	<span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=mi>0</span><span class=p>;</span> <span class=nx>i</span> <span class=p>&lt;</span> <span class=mi>4</span><span class=p>;</span> <span class=nx>i</span><span class=o>++</span> <span class=p>{</span>
+     <span class=k>defer</span> <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>i</span><span class=p>)</span>
+	<span class=p>}</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div></li><li><p>延迟的函数能读取函数的命名返回值结果，并且在 <em>return</em> 前能修改更新它。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=p>(</span>
+	<span class=s>&#34;fmt&#34;</span>
+<span class=p>)</span>
+
+<span class=kd>func</span> <span class=nf>double</span><span class=p>(</span><span class=nx>x</span> <span class=kt>int</span><span class=p>)</span> <span class=p>(</span><span class=nx>result</span> <span class=kt>int</span><span class=p>)</span> <span class=p>{</span>
+	<span class=k>defer</span> <span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
+     <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;double(%d) =%d \n&#34;</span><span class=p>,</span> <span class=nx>x</span><span class=p>,</span> <span class=nx>result</span><span class=p>)</span>
+	<span class=p>}()</span>
+	<span class=k>return</span> <span class=nx>x</span> <span class=o>+</span> <span class=nx>x</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+	<span class=nx>x</span> <span class=o>:=</span> <span class=mi>2</span>
+	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;%d double result is %d\n&#34;</span><span class=p>,</span> <span class=nx>x</span><span class=p>,</span> <span class=nf>double</span><span class=p>(</span><span class=nx>x</span><span class=p>))</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>所以，上面的例子输出结果如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-fallback data-lang=fallback>double(2) =4 
+2 double result is 4
+</code></pre></td></tr></table></div></div><p>请注意，这里的 <em>result</em> 不是参数，所以不能适用规则2。那到底是什么原因导致的呢？没错，就是<strong>闭包</strong>。</p><p>如果将上面的例子稍微修改下，结果会变么？</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=p>(</span>
+	<span class=s>&#34;fmt&#34;</span>
+<span class=p>)</span>
+
+<span class=kd>func</span> <span class=nf>double</span><span class=p>(</span><span class=nx>x</span> <span class=kt>int</span><span class=p>)</span> <span class=kt>int</span> <span class=p>{</span>
+	<span class=kd>var</span> <span class=nx>result</span> <span class=kt>int</span>
+	<span class=k>defer</span> <span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
+     <span class=nx>result</span> <span class=p>=</span> <span class=nx>x</span> <span class=o>+</span> <span class=nx>x</span>
+     <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;double(%d) =%d \n&#34;</span><span class=p>,</span> <span class=nx>x</span><span class=p>,</span> <span class=nx>result</span><span class=p>)</span>
+	<span class=p>}()</span>
+	<span class=k>return</span> <span class=nx>result</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+	<span class=nx>x</span> <span class=o>:=</span> <span class=mi>2</span>
+	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;%d double result is %d\n&#34;</span><span class=p>,</span> <span class=nx>x</span><span class=p>,</span> <span class=nf>double</span><span class=p>(</span><span class=nx>x</span><span class=p>))</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>上面的例子结果如下：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-fallback data-lang=fallback>double(2) =4 
+2 double result is 0
+</code></pre></td></tr></table></div></div><p>结果为什么发生了变化呢？我自己的理解是，上面例子中返回结果未命名，但编译时会自动生成一个，那么 执行 <em>return result</em> 时，则会发生值拷贝，即将 <em>result</em> 的值复制自动生成的结果变量中，所以虽然延迟的函数由于闭包更新了 <em>result</em> 的值，但实际返回结果变量并未修改（注：这段待求证，需要看下汇编）。</p></li></ol><h2 id=2-panic--recover>2. Panic & Recover</h2><p>在编程语言中一般都会有异常处理机制，<strong>Go</strong> 也不例外。一般的错误通常在编译阶段就会提前告警，比如语法错误或类型错误，但想数组边界问题或指针为 <em>nil</em> 这类问题，只有运行时才会引发。并且这类运行时发生的错误，会导致 <em>panic</em> ，程序也会退出。当然 <em>panic</em> 我们也可以手动触发，让程序主动退出。</p><h3 id=21-触发panic>2.1 触发Panic</h3><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=p>(</span>
+	<span class=s>&#34;fmt&#34;</span>
+<span class=p>)</span>
+
+<span class=kd>func</span> <span class=nf>f</span><span class=p>(</span><span class=nx>x</span> <span class=kt>int</span><span class=p>)</span> <span class=p>{</span>
+	<span class=k>if</span> <span class=nx>x</span> <span class=o>==</span> <span class=mi>0</span> <span class=p>{</span>
+		<span class=nb>panic</span><span class=p>(</span><span class=s>&#34;x can not be zero&#34;</span><span class=p>)</span>
+	<span class=p>}</span>
+	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;f(%d)\n&#34;</span><span class=p>,</span> <span class=nx>x</span><span class=p>)</span>
+	<span class=k>defer</span> <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;defer %d\n&#34;</span><span class=p>,</span> <span class=nx>x</span><span class=p>)</span>
+	<span class=nf>f</span><span class=p>(</span><span class=nx>x</span> <span class=o>-</span> <span class=mi>1</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+	<span class=nf>f</span><span class=p>(</span><span class=mi>3</span><span class=p>)</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>执行上面的代码时，当 * x == 0* 时会主动触发 *panic*，同时程序会主动退出，并打印出相关的错误信息。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-fallback data-lang=fallback>f(3)
+f(2)
+f(1)
+defer 1
+defer 2
+defer 3
+panic: x can not be zero
+...
+</code></pre></td></tr></table></div></div><p>从上面的结果，我们发现一个<a href=post/go/go%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-10/>上篇</a>提到的 <em>defer</em> 的特性，即使在当前函数内出现 <em>panic</em>时延迟的函数也会正常被执行。</p><h3 id=22-recover>2.2 Recover</h3><p>异常发生，有时是需要捕获处理的，比如在处理客户端连接时发生 <em>panic</em> ，我们不能让程序直接退出，需要主动断开客户端的连接，否则客户端可能会等待一段时间，所以我们需要从 <em>panic</em> 恢复—recover，<em>Go</em> 恰好提供了一个内置函数 <em>recover</em>，可是程序已经 <em>panic</em> 了，从哪儿 <em>recover</em> 呢。还记得上面提到的 <em>defer</em> 么，没错就是它。</p><p>下面是一个简单的例子</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=p>(</span>
+	<span class=s>&#34;fmt&#34;</span>
+<span class=p>)</span>
+
+<span class=kd>func</span> <span class=nf>divide</span><span class=p>(</span><span class=nx>a</span><span class=p>,</span> <span class=nx>b</span> <span class=kt>int</span><span class=p>)</span> <span class=p>(</span><span class=nx>result</span> <span class=kt>int</span><span class=p>,</span> <span class=nx>err</span> <span class=kt>error</span><span class=p>)</span> <span class=p>{</span>
+	<span class=k>defer</span> <span class=kd>func</span><span class=p>()</span> <span class=p>{</span>
+		<span class=k>if</span> <span class=nx>p</span> <span class=o>:=</span> <span class=nb>recover</span><span class=p>();</span> <span class=nx>p</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+			<span class=nx>err</span> <span class=p>=</span> <span class=nx>fmt</span><span class=p>.</span><span class=nf>Errorf</span><span class=p>(</span><span class=s>&#34;divide function occurs error: %v&#34;</span><span class=p>,</span> <span class=nx>p</span><span class=p>)</span>
+		<span class=p>}</span>
+	<span class=p>}()</span>
+	<span class=nx>result</span> <span class=p>=</span> <span class=nx>a</span> <span class=o>/</span> <span class=nx>b</span>
+	<span class=k>return</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+	<span class=k>if</span> <span class=nx>_</span><span class=p>,</span> <span class=nx>err</span> <span class=o>:=</span> <span class=nf>divide</span><span class=p>(</span><span class=mi>1</span><span class=p>,</span> <span class=mi>0</span><span class=p>);</span> <span class=nx>err</span> <span class=o>!=</span> <span class=kc>nil</span> <span class=p>{</span>
+		<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>err</span><span class=p>)</span>
+	<span class=p>}</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>通常不应该对进入 <em>panic</em> 的程序做任何处理，但正如前面提到的那样，我们需要从 <em>panic</em> 中恢复，并在程序崩溃退出前，清理网络文件等资源。</p><p>这里还要注意多个协程间，子协程内的 <em>panic</em> 是不能被父协程的 <em>defer</em> 捕获的。这个知识点具体内容后续章节会详细介绍下。</p><p>参考文章</p><p><a href=https://www.oreilly.com/library/view/the-go-programming/9780134190570/ebook_split_049.html>5.8 Deferred Function Calls - The Go Programming Language</a></p><p><a href=https://www.oreilly.com/library/view/the-go-programming/9780134190570/ebook_split_050.html>5.9 Panic - The Go Programming Language</a></p><p><a href=https://www.oreilly.com/library/view/the-go-programming/9780134190570/ebook_split_051.html>5.10 Recover - The Go Programming Language</a></p><p><a href=https://blog.golang.org/defer-panic-and-recover>Defer, Panic, and Recover - The Go Blog</a></p></div><div class=post-copyright><p class=copyright-item><span class=item-title>文章作者</span>
+<span class=item-content>Shawn</span></p><p class=copyright-item><span class=item-title>上次更新</span>
+<span class=item-content>2021-05-06</span></p><p class=copyright-item><span class=item-title>许可协议</span>
+<span class=item-content>版权声明：自由转载-非商用-非衍生-保持署名（<a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh target=_blank>CC BY-NC-ND 4.0</a>）</span></p></div><footer class=post-footer><div class=post-tags><a href=/tags/go/>Go</a>
+<a href=/tags/%E6%95%99%E7%A8%8B/>教程</a></div><nav class=post-nav><a class=next href=/post/go/go%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-10/><span class="next-text nav-default">Go学习笔记 10</span>
+<span class="next-text nav-mobile">下一篇</span>
+<i class="iconfont icon-right"></i></a></nav></footer></article></div><script src=https://utteranc.es/client.js repo=erheisw/blog-comments issue-term=pathname theme=github-light crossorigin=anonymous async></script><noscript>Please enable JavaScript to view the <a href=https://github.com/utterance>comments powered by utterances.</a></noscript></div></main><footer id=footer class=footer><div class=social-links><a href=https://twitter.com/erheishao class="iconfont icon-twitter" title=twitter></a><a href=https://github.com/erheisw class="iconfont icon-github" title=github></a><a href=https://erheisw.github.io/index.xml type=application/rss+xml class="iconfont icon-rss" title=rss></a></div><div class=copyright><span class=power-by>由 <a class=hexo-link href=https://gohugo.io>Hugo</a> 强力驱动</span>
+<span class=division>|</span>
+<span class=theme-info>主题 -
+<a class=theme-link href=https://github.com/olOwOlo/hugo-theme-even>Even</a></span><div class=busuanzi-footer><span id=busuanzi_container_site_pv>本站总访问量 <span id=busuanzi_value_site_pv><img src=/img/spinner.svg alt=spinner.svg></span> 次</span>
+<span class=division>|</span>
+<span id=busuanzi_container_site_uv>本站总访客数 <span id=busuanzi_value_site_uv><img src=/img/spinner.svg alt=spinner.svg></span> 人</span></div><span class=copyright-year>&copy;
+2020 -
+2021
+<span class=heart><i class="iconfont icon-heart"></i></span>
+<span class=author>Shawn</span></span></div></footer><div class=back-to-top id=back-to-top><i class="iconfont icon-up"></i></div></div><script src=https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin=anonymous></script><script src=https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin=anonymous></script><script src=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin=anonymous></script><script type=text/javascript src=/js/main.min.2517c0eb67172a0bae917de4af59b10ca2531411a009d4c0b82f5685259e5771.js></script></body></html>
