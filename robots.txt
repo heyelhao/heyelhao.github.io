@@ -1,2 +1,2 @@
 User-agent: *
-Sitemap: https://erheisw.github.io/sitemap.xml
+Sitemap: https://heyel.xyz/sitemap.xml
