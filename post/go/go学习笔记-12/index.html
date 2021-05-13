@@ -1,0 +1,293 @@
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><title>Go学习笔记 12 - Shawn的木屋</title><meta name=renderer content="webkit"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=cache-control content="no-transform"><meta http-equiv=cache-control content="no-siteapp"><meta name=theme-color content="#f8f5ec"><meta name=msapplication-navbutton-color content="#f8f5ec"><meta name=apple-mobile-web-app-capable content="yes"><meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec"><meta name=author content="Shawn"><meta name=description content="Go学习笔记-12"><meta name=keywords content="Method,struct"><meta name=generator content="Hugo 0.83.1 with theme even"><link rel=canonical href=https://erheisw.github.io/post/go/go%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-12/><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/manifest.json><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script><link href=/sass/main.min.8c3cbcb0324c2bb4875ceccba4007cbad4b4ac8377f33af9953c3e7684534a50.css rel=stylesheet><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous><meta property="og:title" content="Go学习笔记 12"><meta property="og:description" content="Go学习笔记-12"><meta property="og:type" content="article"><meta property="og:url" content="https://erheisw.github.io/post/go/go%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-12/"><meta property="article:section" content="post"><meta property="article:published_time" content="2021-05-08T23:38:45+08:00"><meta property="article:modified_time" content="2021-05-08T23:38:45+08:00"><meta itemprop=name content="Go学习笔记 12"><meta itemprop=description content="Go学习笔记-12"><meta itemprop=datePublished content="2021-05-08T23:38:45+08:00"><meta itemprop=dateModified content="2021-05-08T23:38:45+08:00"><meta itemprop=wordCount content="2069"><meta itemprop=keywords content="Go,教程,"><meta name=twitter:card content="summary"><meta name=twitter:title content="Go学习笔记 12"><meta name=twitter:description content="Go学习笔记-12"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script><script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]--></head><body><div id=mobile-navbar class=mobile-navbar><div class=mobile-header-logo><a href=/ class=logo>Shawn的木屋</a></div><div class=mobile-navbar-icon><span></span><span></span><span></span></div></div><nav id=mobile-menu class="mobile-menu slideout-menu"><ul class=mobile-menu-list><a href=/><li class=mobile-menu-item>首页</li></a><a href=/post/><li class=mobile-menu-item>归档</li></a><a href=/categories/><li class=mobile-menu-item>分类</li></a><a href=/tags/><li class=mobile-menu-item>标签</li></a><a href=/about/><li class=mobile-menu-item>关于我</li></a></ul></nav><div class=container id=mobile-panel><header id=header class=header><div class=logo-wrapper><a href=/ class=logo>Shawn的木屋</a></div><nav class=site-navbar><ul id=menu class=menu><li class=menu-item><a class=menu-item-link href=/>首页</a></li><li class=menu-item><a class=menu-item-link href=/post/>归档</a></li><li class=menu-item><a class=menu-item-link href=/categories/>分类</a></li><li class=menu-item><a class=menu-item-link href=/tags/>标签</a></li><li class=menu-item><a class=menu-item-link href=/about/>关于我</a></li></ul></nav></header><main id=main class=main><div class=content-wrapper><div id=content class=content><article class=post><header class=post-header><h1 class=post-title>Go学习笔记 12</h1><div class=post-meta><span class=post-time>2021-05-08</span><div class=post-category><a href=/categories/%E6%8A%80%E6%9C%AF/>技术</a>
+<a href=/categories/%E7%AC%94%E8%AE%B0/>笔记</a></div><span class=more-meta>约 2069 字</span>
+<span class=more-meta>预计阅读 5 分钟</span>
+<span id=busuanzi_container_page_pv class=more-meta><span id=busuanzi_value_page_pv><img src=/img/spinner.svg alt=spinner.svg></span> 次阅读</span></div></header><div class=post-toc id=post-toc><h2 class=post-toc-title>文章目录</h2><div class="post-toc-content always-active"><nav id=TableOfContents><ul><li><a href=#1-方法声明>1. 方法声明</a></li><li><a href=#2-指针类型的方法>2. 指针类型的方法</a></li><li><a href=#3-嵌入组合>3. 嵌入组合</a></li><li><a href=#4-method-values-vs-method-expressions>4. Method Values vs Method Expressions</a></li><li><a href=#5-getter-和-setter>5. Getter 和 Setter</a></li></ul></nav></div></div><div class=post-content><p>在编程中占有支配地位的 <strong>OOP</strong> （object-oriented programming），已经被大部分语言所支持，<em>Go</em>也不例外。前面介绍了 <em>struct</em> ，虽然我们可以用它定义了对象，但现实世界的对象不仅有属性还有行为。上篇详细介绍了 <em>function</em>，但它不是某个对象所特有的。我们需要给 <em>struct</em> 加一些“function”， 属于 <em>struct</em> 的 <em>function</em>，我们称之为方法——Method。</p><h2 id=1-方法声明>1. 方法声明</h2><p>方法声明类似于函数声明，但需要在函数名前有个额外的参数，这个额外的参数就是拥有方法的某个类型。我们一个具体的例子，从这个简单的例子，我们能看出方法与函数的区别和联系。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>geometry</span>
+
+<span class=kn>import</span> <span class=s>&#34;math&#34;</span>
+
+<span class=kd>type</span> <span class=nx>Point</span> <span class=kd>struct</span><span class=p>{</span> <span class=nx>X</span><span class=p>,</span> <span class=nx>Y</span> <span class=kt>float64</span> <span class=p>}</span>
+
+<span class=c1>// traditional function
+</span><span class=c1></span><span class=kd>func</span> <span class=nf>Distance</span><span class=p>(</span><span class=nx>p</span><span class=p>,</span> <span class=nx>q</span> <span class=nx>Point</span><span class=p>)</span> <span class=kt>float64</span> <span class=p>{</span>
+    <span class=k>return</span> <span class=nx>math</span><span class=p>.</span><span class=nf>Hypot</span><span class=p>(</span><span class=nx>q</span><span class=p>.</span><span class=nx>X</span><span class=o>-</span><span class=nx>p</span><span class=p>.</span><span class=nx>X</span><span class=p>,</span> <span class=nx>q</span><span class=p>.</span><span class=nx>Y</span><span class=o>-</span><span class=nx>p</span><span class=p>.</span><span class=nx>Y</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=c1>// same thing, but as a method of the Point type
+</span><span class=c1></span><span class=kd>func</span> <span class=p>(</span><span class=nx>p</span> <span class=nx>Point</span><span class=p>)</span> <span class=nf>Distance</span><span class=p>(</span><span class=nx>q</span> <span class=nx>Point</span><span class=p>)</span> <span class=kt>float64</span> <span class=p>{</span>
+    <span class=k>return</span> <span class=nx>math</span><span class=p>.</span><span class=nf>Hypot</span><span class=p>(</span><span class=nx>q</span><span class=p>.</span><span class=nx>X</span><span class=o>-</span><span class=nx>p</span><span class=p>.</span><span class=nx>X</span><span class=p>,</span> <span class=nx>q</span><span class=p>.</span><span class=nx>Y</span><span class=o>-</span><span class=nx>p</span><span class=p>.</span><span class=nx>Y</span><span class=p>)</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>上面例子中的额外参数 <em>p</em> ，我们称之为方法的接收器。与其它语言不通的事，在<em>GO</em>中接收器没有特有的名字关键字，如：<em>this</em> 和 <em>self</em> 等，接收器参数名字与普通参数名字别无二致。由于我们将会频繁的使用接收器参数，所以为了方便我们通常会尽量命名的比较简短，比较通用的做法就是使用类型名字的第一个字母，但要小写，如：<em>p</em>就是Point的首字母的小写形式。</p><p>在上面的例子中，函数名与方法名是相同的，这不会冲突。这是因为两者在不同的 <em>space</em> 下，函数 <em>Distance</em> 是在包级别下的，比如外部调用时：geometry.Distance。然而，方法 <em>Distance</em> 是在 <em>Point</em> 下，调用时是这样：p.Distance，所以在调用 <em>Distance</em> 方法时，我们必须使用 <em>Point</em> 类型的变量。因此，每个类型的方法、字段都有自己的命名空间，所以，不同的类型可以有 <em>Distance</em> 方法，这并不会冲突。例如下面的例子：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// A Path is a journey connecting the points with straight lines.
+</span><span class=c1></span><span class=kd>type</span> <span class=nx>Path</span> <span class=p>[]</span><span class=nx>Point</span>
+
+<span class=c1>// Distance returns the distance traveled along the path.
+</span><span class=c1></span><span class=kd>func</span> <span class=p>(</span><span class=nx>p</span> <span class=nx>Path</span><span class=p>)</span><span class=nf>Distance</span><span class=p>()</span><span class=kt>float64</span><span class=p>{</span>
+  <span class=nx>sum</span> <span class=o>:=</span> <span class=mf>0.0</span>
+  <span class=k>for</span> <span class=nx>i</span> <span class=o>:=</span> <span class=k>range</span> <span class=nx>p</span> <span class=p>{</span>
+    <span class=k>if</span> <span class=nx>i</span> <span class=p>&gt;</span> <span class=mi>0</span> <span class=p>{</span>
+      <span class=nx>sum</span> <span class=o>+=</span> <span class=nx>p</span><span class=p>[</span><span class=nx>i</span><span class=o>-</span><span class=mi>1</span><span class=p>].</span><span class=nf>Distance</span><span class=p>(</span><span class=nx>p</span><span class=p>[</span><span class=nx>i</span><span class=p>])</span>
+    <span class=p>}</span>
+  <span class=p>}</span>
+  <span class=k>return</span> <span class=nx>sum</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>这个例子中，也存在一个 <em>Distance</em> 方法，但与 <em>Point</em> 的 <em>Distance</em> 方法并不冲突，甚至在 <em>Path</em> 的 <em>Distance</em> 方法中还可以调用 <em>Point</em> 的 <em>Distance</em> 方法。</p><p>除此之外，还可以发现，<em>Path</em> 其实并不是一个 <em>struct</em> ，它实际是一个 <em>slice</em> ，但我们给了它一个行为（方法）。与其它的 <strong>OO</strong> 语言不同，<em>GO</em> 可以给已有的类型添加方法很简单，如：数值、字符串、切片、映射，甚至某些 <em>函数</em> 也没问题。当然接口和指针是不行的（注：这里的指针不是某个类型的指针，目前我也不懂，后面章节会介绍）。然我们看个示例吧。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>main</span>
+
+<span class=kn>import</span> <span class=p>(</span>
+	<span class=s>&#34;fmt&#34;</span>
+<span class=p>)</span>
+
+<span class=kd>type</span> <span class=nx>Weekday</span> <span class=kt>int</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>w</span> <span class=nx>Weekday</span><span class=p>)</span> <span class=nf>String</span><span class=p>()</span> <span class=kt>string</span> <span class=p>{</span>
+	<span class=kd>var</span> <span class=nx>result</span> <span class=kt>string</span>
+	<span class=k>switch</span> <span class=nx>w</span> <span class=p>{</span>
+	<span class=k>case</span> <span class=mi>0</span><span class=p>:</span>
+		<span class=nx>result</span> <span class=p>=</span> <span class=nx>fmt</span><span class=p>.</span><span class=nf>Sprintf</span><span class=p>(</span><span class=s>&#34;The %d day of Week is Sunday.&#34;</span><span class=p>,</span> <span class=nx>w</span><span class=p>)</span>
+	<span class=k>case</span> <span class=mi>1</span><span class=p>:</span>
+		<span class=nx>result</span> <span class=p>=</span> <span class=nx>fmt</span><span class=p>.</span><span class=nf>Sprintf</span><span class=p>(</span><span class=s>&#34;The %d day of Week is Monday.&#34;</span><span class=p>,</span> <span class=nx>w</span><span class=p>)</span>
+	<span class=k>case</span> <span class=mi>2</span><span class=p>:</span>
+		<span class=nx>result</span> <span class=p>=</span> <span class=nx>fmt</span><span class=p>.</span><span class=nf>Sprintf</span><span class=p>(</span><span class=s>&#34;The %d day of Week is Tuesday.&#34;</span><span class=p>,</span> <span class=nx>w</span><span class=p>)</span>
+	<span class=k>case</span> <span class=mi>3</span><span class=p>:</span>
+		<span class=nx>result</span> <span class=p>=</span> <span class=nx>fmt</span><span class=p>.</span><span class=nf>Sprintf</span><span class=p>(</span><span class=s>&#34;The %d day of Week is Wednesday.&#34;</span><span class=p>,</span> <span class=nx>w</span><span class=p>)</span>
+	<span class=k>case</span> <span class=mi>4</span><span class=p>:</span>
+		<span class=nx>result</span> <span class=p>=</span> <span class=nx>fmt</span><span class=p>.</span><span class=nf>Sprintf</span><span class=p>(</span><span class=s>&#34;The %d day of Week is Thursday.&#34;</span><span class=p>,</span> <span class=nx>w</span><span class=p>)</span>
+	<span class=k>case</span> <span class=mi>5</span><span class=p>:</span>
+		<span class=nx>result</span> <span class=p>=</span> <span class=nx>fmt</span><span class=p>.</span><span class=nf>Sprintf</span><span class=p>(</span><span class=s>&#34;The %d day of Week is Friday.&#34;</span><span class=p>,</span> <span class=nx>w</span><span class=p>)</span>
+	<span class=k>case</span> <span class=mi>6</span><span class=p>:</span>
+		<span class=nx>result</span> <span class=p>=</span> <span class=nx>fmt</span><span class=p>.</span><span class=nf>Sprintf</span><span class=p>(</span><span class=s>&#34;The %d day of Week is Saturday.&#34;</span><span class=p>,</span> <span class=nx>w</span><span class=p>)</span>
+	<span class=k>default</span><span class=p>:</span>
+		<span class=nx>result</span> <span class=p>=</span> <span class=nx>fmt</span><span class=p>.</span><span class=nf>Sprintf</span><span class=p>(</span><span class=s>&#34;The %d day of Week is invalid.&#34;</span><span class=p>,</span> <span class=nx>w</span><span class=p>)</span>
+	<span class=p>}</span>
+	<span class=k>return</span> <span class=nx>result</span>
+<span class=p>}</span>
+
+<span class=kd>type</span> <span class=nx>FuncA</span> <span class=kd>func</span><span class=p>()</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>f</span> <span class=nx>FuncA</span><span class=p>)</span> <span class=nf>Hi</span><span class=p>()</span> <span class=p>{</span>
+	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;This FuncA&#39;s method&#34;</span><span class=p>)</span>
+	<span class=nf>f</span><span class=p>()</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>Hi</span><span class=p>()</span> <span class=p>{</span>
+	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;This is FuncA&#34;</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>()</span> <span class=p>{</span>
+	<span class=nx>w</span> <span class=o>:=</span> <span class=nf>Weekday</span><span class=p>(</span><span class=mi>5</span><span class=p>)</span>
+	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>w</span><span class=p>)</span>
+	<span class=kd>var</span> <span class=nx>f</span> <span class=nx>FuncA</span> <span class=p>=</span> <span class=nx>Hi</span>
+	<span class=nx>f</span><span class=p>.</span><span class=nf>Hi</span><span class=p>()</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h2 id=2-指针类型的方法>2. 指针类型的方法</h2><p><em>Go</em> 中，如果想要改变接收参数的属性就必须使用接收器参数是指针类型，并且它的使用方式与普通的没有区别。在下面的例子中，我们可以看到指针类型的变量q可以正常调用接收器为非指针的方法，而且非指针类型的变量p同样可以调用接收器为指针的方法。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kd>func</span> <span class=p>(</span><span class=nx>p</span> <span class=o>*</span><span class=nx>Point</span><span class=p>)</span> <span class=nf>ScaleBy</span> <span class=p>(</span><span class=nx>factor</span> <span class=kt>float64</span><span class=p>){</span>
+  <span class=nx>p</span><span class=p>.</span><span class=nx>X</span> <span class=o>*=</span> <span class=nx>factor</span>
+  <span class=nx>p</span><span class=p>.</span><span class=nx>Y</span> <span class=o>*=</span> <span class=nx>factor</span>
+<span class=p>}</span>
+<span class=kd>func</span> <span class=nf>main</span><span class=p>(){</span>
+  <span class=nx>p</span><span class=p>,</span> <span class=nx>q</span> <span class=o>:=</span> <span class=nx>Point</span><span class=p>{</span><span class=mi>1</span><span class=p>,</span><span class=mi>2</span><span class=p>},</span> <span class=o>&amp;</span><span class=nx>Point</span><span class=p>{</span><span class=mi>3</span><span class=p>,</span><span class=mi>5</span><span class=p>}</span>
+  <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>p</span><span class=p>,</span><span class=nx>q</span><span class=p>,</span><span class=nx>q</span><span class=p>.</span><span class=nf>Distance</span><span class=p>(</span><span class=nx>p</span><span class=p>))</span>
+  <span class=nx>p</span><span class=p>.</span><span class=nf>Scale</span><span class=p>(</span><span class=mf>2.0</span><span class=p>)</span>
+  <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>p</span><span class=p>,</span><span class=nx>q</span><span class=p>,</span><span class=nx>q</span><span class=p>.</span><span class=nf>Distance</span><span class=p>(</span><span class=nx>p</span><span class=p>))</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>这里要强调下，如果某个类型有一个方法的接收器参数是指针类型的，那么其它的方法应尽量也统一为指针，这在<em>Go</em>中是个约定俗成，上面的例子只是为了展示方法的接收器不同类型的参数。</p><h2 id=3-嵌入组合>3. 嵌入组合</h2><p>在 <em>Struct</em> 中，我们介绍了将类型嵌入另一个类型时，被嵌入的类型不仅会获得嵌入类型的属性还有它的方法。如下面的例子：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kd>type</span> <span class=nx>ColoredPoint</span> <span class=kd>struct</span><span class=p>{</span>
+  <span class=nx>Point</span>
+  <span class=nx>Color</span> <span class=nx>color</span><span class=p>.</span><span class=nx>RGBA</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>在 <em>ColoredPoint</em> 这个结构体中，实际有三个字段。是因为嵌入的 <em>Point</em>，使 <em>ColoredPoint</em> 也有了 <em>X</em> 和 <em>Y</em> 这两个字段。同时，也获得了 <em>Distance</em> 和 <em>Scale</em> 两个方法。下面示例展示了使用方式：</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kd>var</span> <span class=nx>red</span><span class=p>,</span> <span class=nx>green</span> <span class=nx>ColoredPoint</span>
+<span class=nx>red</span><span class=p>.</span><span class=nx>X</span> <span class=p>=</span> <span class=mi>1</span>
+<span class=nx>red</span><span class=p>.</span><span class=nx>Y</span> <span class=p>=</span> <span class=mi>2</span>
+<span class=nx>red</span><span class=p>.</span><span class=nx>Color</span> <span class=p>=</span> <span class=nx>color</span><span class=p>.</span><span class=nx>RGBA</span><span class=p>{</span><span class=mi>255</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=mi>255</span><span class=p>}</span>
+<span class=nx>green</span><span class=p>.</span><span class=nx>Color</span> <span class=p>=</span> <span class=nx>color</span><span class=p>.</span><span class=nx>RGBA</span><span class=p>{</span><span class=mi>0</span><span class=p>,</span> <span class=mi>255</span><span class=p>,</span> <span class=mi>0</span><span class=p>,</span> <span class=mi>255</span><span class=p>}</span>
+<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;red point:&#34;</span><span class=p>,</span> <span class=nx>red</span><span class=p>)</span>
+<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;green point:&#34;</span><span class=p>,</span> <span class=nx>green</span><span class=p>)</span>
+<span class=nx>red</span><span class=p>.</span><span class=nf>Scale</span><span class=p>(</span><span class=mi>3</span><span class=p>)</span>
+<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;Red point scaled %v\n&#34;</span><span class=p>,</span><span class=nx>red</span><span class=p>)</span>
+<span class=nx>green</span><span class=p>.</span><span class=nx>X</span> <span class=p>=</span> <span class=mi>5</span>
+<span class=nx>green</span><span class=p>.</span><span class=nx>Y</span> <span class=p>=</span> <span class=mi>6</span>
+<span class=c1>//fmt.Printf(&#34;The distance between red and green points is :%.4f\n&#34;, red.Distance(green))
+</span></code></pre></td></tr></table></div></div><p>如果去掉代码中的注释，程序运行会失败，why？<em>ColoredPoint</em> 确实获得了 <em>Distance</em> 方法，但是该方法的参数类型是 <em>Point</em>，所以才会报错。那么怎么改呢，其实没那么复杂。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=c1>// 方法一
+</span><span class=c1></span><span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;The distance between red and green points is :%.4f\n&#34;</span><span class=p>,</span> <span class=nx>red</span><span class=p>.</span><span class=nf>Distance</span><span class=p>(</span><span class=nx>green</span><span class=p>.</span><span class=nx>Point</span><span class=p>))</span>
+<span class=c1>// 方法二
+</span><span class=c1></span><span class=kd>func</span> <span class=p>(</span><span class=nx>c</span> <span class=o>*</span><span class=nx>ColoredPoint</span><span class=p>)</span><span class=nf>Distance</span><span class=p>(</span><span class=nx>d</span> <span class=nx>ColoredPoint</span><span class=p>)</span><span class=kt>float64</span><span class=p>{</span>
+  <span class=k>return</span> <span class=nx>c</span><span class=p>.</span><span class=nx>Point</span><span class=p>.</span><span class=nf>Distance</span><span class=p>(</span><span class=nx>d</span><span class=p>.</span><span class=nx>Point</span><span class=p>)</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>从上面的示例中，我们不难发现<em>Go</em>中的嵌入与其它面向对象语言的继承还是不一样的。嵌入并没有实现对象的继承，这其实是一种语法糖。</p><h2 id=4-method-values-vs-method-expressions>4. Method Values vs Method Expressions</h2><p>Method values 是什么呢，看下面的示例吧</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=nx>p</span> <span class=o>:=</span> <span class=nx>Point</span><span class=p>{</span><span class=mi>1</span><span class=p>,</span> <span class=mi>2</span><span class=p>}</span>
+<span class=nx>q</span> <span class=o>:=</span> <span class=nx>Point</span><span class=p>{</span><span class=mi>4</span><span class=p>,</span> <span class=mi>6</span><span class=p>}</span>
+
+<span class=c1>// method value
+</span><span class=c1></span><span class=nx>distanceFromP</span> <span class=o>:=</span> <span class=nx>p</span><span class=p>.</span><span class=nx>Distance</span>        
+<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nf>distanceFromP</span><span class=p>(</span><span class=nx>q</span><span class=p>))</span>      <span class=c1>// &#34;5&#34;
+</span></code></pre></td></tr></table></div></div><p>那 Method Expressions又是啥？与<em>Method Values</em>不同的是，它需要额外多提供接收器参数。这里值得注意的是接收器参数类型非指针与指针的区别，具体看下面的例子。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=nx>p</span> <span class=o>:=</span> <span class=nx>Point</span><span class=p>{</span><span class=mi>1</span><span class=p>,</span> <span class=mi>2</span><span class=p>}</span>
+<span class=nx>q</span> <span class=o>:=</span> <span class=nx>Point</span><span class=p>{</span><span class=mi>4</span><span class=p>,</span> <span class=mi>6</span><span class=p>}</span>
+
+<span class=c1>// method expression
+</span><span class=c1></span><span class=nx>distance</span> <span class=o>:=</span> <span class=nx>Point</span><span class=p>.</span><span class=nx>Distance</span>
+<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nf>distance</span><span class=p>(</span><span class=nx>p</span><span class=p>,</span><span class=nx>q</span><span class=p>))</span>
+<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;%T\n&#34;</span><span class=p>,</span><span class=nx>distance</span><span class=p>)</span> <span class=c1>//output:func(Point, Point) float64
+</span><span class=c1></span><span class=nx>scale</span> <span class=o>:=</span> <span class=p>(</span><span class=o>*</span><span class=nx>Point</span><span class=p>).</span><span class=nx>Scale</span>
+<span class=nf>scale</span><span class=p>(</span><span class=o>&amp;</span><span class=nx>p</span><span class=p>,</span><span class=mi>2</span><span class=p>)</span>
+<span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>p</span><span class=p>)</span>
+<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;%T\n&#34;</span><span class=p>,</span><span class=nx>scale</span><span class=p>)</span> <span class=c1>//output:func(*Point, float64)
+</span></code></pre></td></tr></table></div></div><h2 id=5-getter-和-setter>5. Getter 和 Setter</h2><p><em>Go</em> 语言对字段的读取和更新，也是建议使用方法的，但与 <em>Java</em> 类有些不同。在 <em>Go</em> 的源码里能看到这些体现</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>log</span>
+
+<span class=kd>type</span> <span class=nx>Logger</span> <span class=kd>struct</span> <span class=p>{</span>
+    <span class=nx>flags</span>  <span class=kt>int</span>
+    <span class=nx>prefix</span> <span class=kt>string</span>
+    <span class=c1>// ...
+</span><span class=c1></span><span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>l</span> <span class=o>*</span><span class=nx>Logger</span><span class=p>)</span> <span class=nf>Flags</span><span class=p>()</span> <span class=kt>int</span>
+<span class=kd>func</span> <span class=p>(</span><span class=nx>l</span> <span class=o>*</span><span class=nx>Logger</span><span class=p>)</span> <span class=nf>SetFlags</span><span class=p>(</span><span class=nx>flag</span> <span class=kt>int</span><span class=p>)</span>
+<span class=kd>func</span> <span class=p>(</span><span class=nx>l</span> <span class=o>*</span><span class=nx>Logger</span><span class=p>)</span> <span class=nf>Prefix</span><span class=p>()</span> <span class=kt>string</span>
+<span class=kd>func</span> <span class=p>(</span><span class=nx>l</span> <span class=o>*</span><span class=nx>Logger</span><span class=p>)</span> <span class=nf>SetPrefix</span><span class=p>(</span><span class=nx>prefix</span> <span class=kt>string</span><span class=p>)</span>
+</code></pre></td></tr></table></div></div><p>从上面的部分 <em>log</em> 源码里，我们可以发现更新字段的方法通常是以<em>Set+字段名</em>命名，然而读取方法则直接时字段名即可。</p></div><div class=post-copyright><p class=copyright-item><span class=item-title>文章作者</span>
+<span class=item-content>Shawn</span></p><p class=copyright-item><span class=item-title>上次更新</span>
+<span class=item-content>2021-05-08</span></p><p class=copyright-item><span class=item-title>许可协议</span>
+<span class=item-content>版权声明：自由转载-非商用-非衍生-保持署名（<a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh target=_blank>CC BY-NC-ND 4.0</a>）</span></p></div><footer class=post-footer><div class=post-tags><a href=/tags/go/>Go</a>
+<a href=/tags/%E6%95%99%E7%A8%8B/>教程</a></div><nav class=post-nav><a class=next href=/post/go/go%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-11/><span class="next-text nav-default">Go学习笔记 11</span>
+<span class="next-text nav-mobile">下一篇</span>
+<i class="iconfont icon-right"></i></a></nav></footer></article></div><script src=https://utteranc.es/client.js repo=erheisw/blog-comments issue-term=pathname theme=github-light crossorigin=anonymous async></script><noscript>Please enable JavaScript to view the <a href=https://github.com/utterance>comments powered by utterances.</a></noscript></div></main><footer id=footer class=footer><div class=social-links><a href=https://twitter.com/erheishao class="iconfont icon-twitter" title=twitter></a><a href=https://github.com/erheisw class="iconfont icon-github" title=github></a><a href=https://erheisw.github.io/index.xml type=application/rss+xml class="iconfont icon-rss" title=rss></a></div><div class=copyright><span class=power-by>由 <a class=hexo-link href=https://gohugo.io>Hugo</a> 强力驱动</span>
+<span class=division>|</span>
+<span class=theme-info>主题 -
+<a class=theme-link href=https://github.com/olOwOlo/hugo-theme-even>Even</a></span><div class=busuanzi-footer><span id=busuanzi_container_site_pv>本站总访问量 <span id=busuanzi_value_site_pv><img src=/img/spinner.svg alt=spinner.svg></span> 次</span>
+<span class=division>|</span>
+<span id=busuanzi_container_site_uv>本站总访客数 <span id=busuanzi_value_site_uv><img src=/img/spinner.svg alt=spinner.svg></span> 人</span></div><span class=copyright-year>&copy;
+2020 -
+2021
+<span class=heart><i class="iconfont icon-heart"></i></span>
+<span class=author>Shawn</span></span></div></footer><div class=back-to-top id=back-to-top><i class="iconfont icon-up"></i></div></div><script src=https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin=anonymous></script><script src=https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin=anonymous></script><script src=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin=anonymous></script><script type=text/javascript src=/js/main.min.2517c0eb67172a0bae917de4af59b10ca2531411a009d4c0b82f5685259e5771.js></script></body></html>
