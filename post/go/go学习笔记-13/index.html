@@ -1,0 +1,159 @@
+<!doctype html><html lang=zh-cn><head><meta charset=utf-8><meta http-equiv=x-ua-compatible content="IE=edge,chrome=1"><title>Go学习笔记 13 - heyel的驿站</title><meta name=renderer content="webkit"><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=1"><meta http-equiv=cache-control content="no-transform"><meta http-equiv=cache-control content="no-siteapp"><meta name=theme-color content="#f8f5ec"><meta name=msapplication-navbutton-color content="#f8f5ec"><meta name=apple-mobile-web-app-capable content="yes"><meta name=apple-mobile-web-app-status-bar-style content="#f8f5ec"><meta name=author content="Heyel"><meta name=description content="Go学习笔记-13"><meta name=keywords content="Interface"><meta name=generator content="Hugo 0.83.1 with theme even"><link rel=canonical href=https://heyel.xyz/post/go/go%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-13/><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=manifest href=/manifest.json><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><script async src=//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js></script><link href=/sass/main.min.8c3cbcb0324c2bb4875ceccba4007cbad4b4ac8377f33af9953c3e7684534a50.css rel=stylesheet><link rel=stylesheet href=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.css integrity="sha256-7TyXnr2YU040zfSP+rEcz29ggW4j56/ujTPwjMzyqFY=" crossorigin=anonymous><meta property="og:title" content="Go学习笔记 13"><meta property="og:description" content="Go学习笔记-13"><meta property="og:type" content="article"><meta property="og:url" content="https://heyel.xyz/post/go/go%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-13/"><meta property="article:section" content="post"><meta property="article:published_time" content="2021-05-15T22:28:45+08:00"><meta property="article:modified_time" content="2021-05-15T22:28:45+08:00"><meta itemprop=name content="Go学习笔记 13"><meta itemprop=description content="Go学习笔记-13"><meta itemprop=datePublished content="2021-05-15T22:28:45+08:00"><meta itemprop=dateModified content="2021-05-15T22:28:45+08:00"><meta itemprop=wordCount content="1564"><meta itemprop=keywords content="Go,教程,"><meta name=twitter:card content="summary"><meta name=twitter:title content="Go学习笔记 13"><meta name=twitter:description content="Go学习笔记-13"><!--[if lte IE 9]><script src=https://cdnjs.cloudflare.com/ajax/libs/classlist/1.1.20170427/classList.min.js></script><![endif]--><!--[if lt IE 9]><script src=https://cdn.jsdelivr.net/npm/html5shiv@3.7.3/dist/html5shiv.min.js></script><script src=https://cdn.jsdelivr.net/npm/respond.js@1.4.2/dest/respond.min.js></script><![endif]--></head><body><div id=mobile-navbar class=mobile-navbar><div class=mobile-header-logo><a href=/ class=logo>heyel的驿站</a></div><div class=mobile-navbar-icon><span></span><span></span><span></span></div></div><nav id=mobile-menu class="mobile-menu slideout-menu"><ul class=mobile-menu-list><a href=/><li class=mobile-menu-item>首页</li></a><a href=/post/><li class=mobile-menu-item>归档</li></a><a href=/categories/><li class=mobile-menu-item>分类</li></a><a href=/tags/><li class=mobile-menu-item>标签</li></a><a href=/about/><li class=mobile-menu-item>关于我</li></a></ul></nav><div class=container id=mobile-panel><header id=header class=header><div class=logo-wrapper><a href=/ class=logo>heyel的驿站</a></div><nav class=site-navbar><ul id=menu class=menu><li class=menu-item><a class=menu-item-link href=/>首页</a></li><li class=menu-item><a class=menu-item-link href=/post/>归档</a></li><li class=menu-item><a class=menu-item-link href=/categories/>分类</a></li><li class=menu-item><a class=menu-item-link href=/tags/>标签</a></li><li class=menu-item><a class=menu-item-link href=/about/>关于我</a></li></ul></nav></header><main id=main class=main><div class=content-wrapper><div id=content class=content><article class=post><header class=post-header><h1 class=post-title>Go学习笔记 13</h1><div class=post-meta><span class=post-time>2021-05-15</span><div class=post-category><a href=/categories/%E6%8A%80%E6%9C%AF/>技术</a>
+<a href=/categories/%E7%AC%94%E8%AE%B0/>笔记</a></div><span class=more-meta>约 1564 字</span>
+<span class=more-meta>预计阅读 4 分钟</span>
+<span id=busuanzi_container_page_pv class=more-meta><span id=busuanzi_value_page_pv><img src=/img/spinner.svg alt=spinner.svg></span> 次阅读</span></div></header><div class=post-toc id=post-toc><h2 class=post-toc-title>文章目录</h2><div class="post-toc-content always-active"><nav id=TableOfContents><ul><li><a href=#1-接口定义>1. 接口定义</a></li><li><a href=#2-接口实现>2. 接口实现</a></li><li><a href=#3-接口嵌入>3. 接口嵌入</a></li><li><a href=#4-接口的值>4. 接口的值</a></li><li><a href=#5-指针类型的接口>5. 指针类型的接口</a></li></ul></nav></div></div><div class=post-content><p>接口，是某类行为的抽象集合，它描述了一类或几类对象的共有的行为。所以，接口可以让函数功能不必紧紧绑定在具体的、特定的实现。<strong>Go</strong> 也给我们提供了接口——Interface，与其它语言不同的是 <em>Go</em> 中的接口不需要 <em>struct</em> 显示的声明实现，它只需要实现某个接口的所有方法，就可以认为该 <em>struct</em> 实现了这个接口，这中方式有很多优势。别急，本篇我们就会学习下它——Interface</p><h2 id=1-接口定义>1. 接口定义</h2><p>在定义接口之前，我们需要明确接口是什么？在面向对象领域里，接口是这样定义的：<strong>接口描述或定义了对象的行为</strong>。换句话说，接口仅指定了对象应该做什么，至于这个行为的具体细节，由具体的对象来定义。</p><p>在 <em>Go</em> 语言中，接口可以认为是方法签名的集合。当一个类实现了接口中所有的方法，我们就认为它实现了该接口。</p><p>在 <em>Go</em> 语言中，使用 <em>type</em> 关键字定义接口。如下面代码所示</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kd>type</span> <span class=nx>Scale</span> <span class=kd>interface</span><span class=p>{</span>
+    <span class=nf>ScaleBy</span> <span class=p>(</span><span class=nx>factor</span> <span class=kt>float64</span><span class=p>)</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>上面示例代码，定义了一个 <em>Scale</em> 接口，所以要实现 <em>Scale</em> 这个接口，必须实现 <em>ScaleBy</em> 这个方法，那怎么实现呢？</p><h2 id=2-接口实现>2. 接口实现</h2><p>上面我们定义了个接口，要实现这个接口很简单，只要实现它的方法集合就可以。由于它的方法集合只有 <em>ScaleBy</em> 一个方法，所以只要实现了这个方法，我们就认为类实现了 <em>Scale</em> 接口。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kd>type</span> <span class=nx>Point</span> <span class=kd>struct</span><span class=p>{</span>
+  <span class=nx>X</span><span class=p>,</span> <span class=nx>Y</span> <span class=kt>float64</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>p</span> <span class=o>*</span><span class=nx>Point</span><span class=p>)</span><span class=nf>ScaleBy</span><span class=p>(</span><span class=nx>factor</span> <span class=kt>float64</span><span class=p>){</span>
+  <span class=nx>p</span><span class=p>.</span><span class=nx>X</span> <span class=o>*=</span> <span class=nx>factor</span>
+  <span class=nx>p</span><span class=p>.</span><span class=nx>Y</span> <span class=o>*=</span> <span class=nx>factor</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>从上面的例子中，可以发现 <em>Go</em> 语言中接口实现是隐式的，不像 <strong>Java</strong> 那样显示声明。其实这很有优势，我们可以在包外定义一个接口：它的方法集合恰好包里的类都实现了，这样我们就可以面向接口了，不必指定具体的类型了。</p><h2 id=3-接口嵌入>3. 接口嵌入</h2><p>前面我们介绍过 <em>struct</em> 可以以嵌入的方式实现不同的 <em>struct</em> 的组合继承，接口也有同样的特性，例如下面的示例代码。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kn>package</span> <span class=nx>io</span>
+<span class=kd>type</span> <span class=nx>Reader</span> <span class=kd>interface</span> <span class=p>{</span>
+    <span class=nf>Read</span><span class=p>(</span><span class=nx>p</span> <span class=p>[]</span><span class=kt>byte</span><span class=p>)</span> <span class=p>(</span><span class=nx>n</span> <span class=kt>int</span><span class=p>,</span> <span class=nx>err</span> <span class=kt>error</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=kd>type</span> <span class=nx>Writer</span> <span class=kd>interface</span> <span class=p>{</span>
+  <span class=nf>Write</span><span class=p>(</span> <span class=nx>p</span> <span class=p>[]</span><span class=kt>byte</span><span class=p>)(</span><span class=nx>n</span> <span class=kt>int</span><span class=p>,</span> <span class=nx>err</span> <span class=kt>error</span><span class=p>)</span>
+<span class=p>}</span>
+
+<span class=kd>type</span> <span class=nx>Closer</span> <span class=kd>interface</span> <span class=p>{</span>
+    <span class=nf>Close</span><span class=p>()</span> <span class=kt>error</span>
+<span class=p>}</span>
+
+<span class=c1>// 组合了读写接口成为一个新接口
+</span><span class=c1></span><span class=kd>type</span> <span class=nx>ReadWriter</span> <span class=kd>interface</span> <span class=p>{</span>
+    <span class=nx>Reader</span>
+    <span class=nx>Writer</span>
+<span class=p>}</span>
+<span class=c1>// 将读、写、关闭接口组合成一个新接口
+</span><span class=c1></span><span class=kd>type</span> <span class=nx>ReadWriteCloser</span> <span class=kd>interface</span> <span class=p>{</span>
+    <span class=nx>Reader</span>
+    <span class=nx>Writer</span>
+    <span class=nx>Closer</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><h2 id=4-接口的值>4. 接口的值</h2><p>虽然前面介绍了接口的定义、实现及嵌入，但我们没有写如何使用接口，其实接口的使用很简单，来看个例子吧。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt>1
+</span><span class=lnt>2
+</span><span class=lnt>3
+</span><span class=lnt>4
+</span><span class=lnt>5
+</span><span class=lnt>6
+</span><span class=lnt>7
+</span><span class=lnt>8
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kd>func</span> <span class=nf>main</span><span class=p>(){</span>
+  <span class=nx>p1</span> <span class=o>:=</span> <span class=nx>Point</span><span class=p>{</span><span class=nx>X</span><span class=p>:</span><span class=mf>1.0</span><span class=p>,</span><span class=nx>Y</span><span class=p>:</span><span class=mf>2.0</span><span class=p>}</span>
+  <span class=kd>var</span> <span class=nx>s</span>  <span class=nx>Scale</span>
+  <span class=nx>s</span> <span class=p>=</span> <span class=o>&amp;</span><span class=nx>p1</span>
+  <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=nx>p1</span><span class=p>)</span>
+  <span class=nx>s</span><span class=p>.</span><span class=nf>Scale</span><span class=p>(</span><span class=mi>3</span><span class=p>)</span>
+  <span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;After scaled p1 is %v\n&#34;</span><span class=p>,</span><span class=nx>p1</span><span class=p>)</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>上面的例子展示了接口的用法，从中我们发现接口变量 <em>s</em> 赋值时，是变量 <em>p1</em> 的指针而不是变量本身。这是因为实现接口的方法 <em>ScaleBy</em> 的接收器参数是 *<strong>Point</strong>，所以不能将变量 <em>p1</em> 赋值给接口变量 <em>s</em>。</p><p>接口其实也是一个类型，那它的值是什么呢？如上面的例子中，变量 <em>s</em> 在声明时，它的值是什么，将变量 <em>p1</em> 的地址赋值给 <em>s</em> 时，它的值又是什么呢？这是一个有意思的问题。</p><p>其实接口的值，它由两部分组成：<strong>具体的类型和该类型的值</strong>，这通常称为动态类型和动态值。</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kd>type</span> <span class=nx>Rectangle</span> <span class=kd>struct</span><span class=p>{</span>
+  <span class=nx>Width</span><span class=p>,</span> <span class=nx>Height</span> <span class=kt>float64</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=p>(</span><span class=nx>r</span> <span class=o>*</span><span class=nx>Rectangle</span><span class=p>)</span> <span class=nf>ScaleBy</span> <span class=p>(</span><span class=nx>factor</span> <span class=kt>float64</span><span class=p>){</span>
+  <span class=nx>r</span><span class=p>.</span><span class=nx>Width</span> <span class=o>*=</span> <span class=nx>factor</span>
+  <span class=nx>r</span><span class=p>.</span><span class=nx>Height</span> <span class=o>*=</span> <span class=nx>factor</span>
+<span class=p>}</span>
+
+<span class=kd>func</span> <span class=nf>main</span><span class=p>(){</span>
+  <span class=kd>var</span> <span class=nx>s</span> <span class=nx>Scale</span>
+	<span class=nx>s</span> <span class=p>=</span> <span class=o>&amp;</span><span class=nx>Point</span><span class=p>{</span><span class=nx>X</span><span class=p>:</span> <span class=mi>2</span><span class=p>,</span> <span class=nx>Y</span><span class=p>:</span> <span class=mi>1</span><span class=p>}</span>
+	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;s Type: %T\t Value:%v\n&#34;</span><span class=p>,</span> <span class=nx>s</span><span class=p>,</span> <span class=nx>s</span><span class=p>)</span>
+	<span class=nx>w</span> <span class=p>=</span> <span class=o>&amp;</span><span class=nx>Rectangle</span><span class=p>{</span><span class=nx>Width</span><span class=p>:</span> <span class=mi>4</span><span class=p>,</span> <span class=nx>Height</span><span class=p>:</span> <span class=mi>1</span><span class=p>}</span>
+	<span class=nx>fmt</span><span class=p>.</span><span class=nf>Printf</span><span class=p>(</span><span class=s>&#34;s Type: %T\t Value:%v\n&#34;</span><span class=p>,</span> <span class=nx>s</span><span class=p>,</span> <span class=nx>s</span><span class=p>)</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>在上面的例子中，接口变量 <em>s</em> 的值发生了三次变化：</p><ul><li><p>声明初始化时，它的值为 <em>nil</em></p><p><img src=/media/learnGo-013-1.png alt=learnGo-013-1></p></li><li><p>s = &Point{X:2, Y:1}，它的值：*Point 和 &{2 1}</p><p><img src=/media/learnGo-013-2.png alt=learnGo-013-2></p></li><li><p>s = &Rectangle{Width: 4, Height: 1}，它的值：*Rectangle 和 &{4,1}</p><p><img src=/media/learnGo-013-3.png alt=learnGo-013-2></p></li></ul><p>接口在某些情况下是可以比较的，需要满足以下条件：</p><ul><li>待比较的接口都是 <em>nil</em></li><li>待比较的接口指向的类型相同且也是可比较的</li></ul><p>因此接口可以做为 <em>map</em> 的键的类型或 <em>switch</em> 的操作符。但如果接口指向的类型是 <em>map</em> 、<em>slice</em> 和 <em>function</em> ，则在比较时会引发 <em>panic</em>。</p><h2 id=5-指针类型的接口>5. 指针类型的接口</h2><p>上面的例子我们给接口变量 <em>s</em> 的值是 <em>Rectangle</em> 类型的指针，这似乎没什么问题。那看下这个例子呢？</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span></code></pre></td><td class=lntd><pre class=chroma><code class=language-go data-lang=go><span class=kd>func</span> <span class=nf>main</span><span class=p>(){</span>
+  <span class=kd>var</span> <span class=nx>s</span> <span class=nx>Scale</span>
+  <span class=kd>var</span> <span class=nx>p</span> <span class=o>*</span><span class=nx>Point</span>
+  <span class=nx>s</span> <span class=p>=</span> <span class=nx>p</span>
+  <span class=k>if</span> <span class=nx>s</span> <span class=o>!=</span><span class=kc>nil</span> <span class=p>{</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;s is not nil&#34;</span><span class=p>)</span>
+    <span class=nx>s</span><span class=p>.</span><span class=nf>Scale</span><span class=p>(</span><span class=mf>2.0</span><span class=p>)</span> <span class=c1>// 这里会引发panic
+</span><span class=c1></span>  <span class=p>}</span><span class=k>else</span><span class=p>{</span>
+    <span class=nx>fmt</span><span class=p>.</span><span class=nf>Println</span><span class=p>(</span><span class=s>&#34;s is nil&#34;</span><span class=p>)</span>
+  <span class=p>}</span>
+<span class=p>}</span>
+</code></pre></td></tr></table></div></div><p>上面的例子运行会 <em>panic</em>，这是不是让你感到困惑。其实，想想上面介绍的 <em>接口的值</em> 是由两部分组成，你或许会明白点。由于接口的值是由 <strong>具体的类型和该类型的值</strong> 组成，所以当我们给 <em>s</em> 赋值时（s = p），它就指向了具体的类型，只不过它指向该类的值是 <em>nil</em>，但 <em>s</em> 本身已不是 <em>nil</em> 。所以在处理接口值是指针类型时，我们需要小心谨慎些。</p><p>未完待续…</p><p>参考文章</p><p><a href=https://learning.oreilly.com/library/view/the-go-programming/9780134190570/ebook_split_059.html>Interfaces</a></p></div><div class=post-copyright><p class=copyright-item><span class=item-title>文章作者</span>
+<span class=item-content>Heyel</span></p><p class=copyright-item><span class=item-title>上次更新</span>
+<span class=item-content>2021-05-15</span></p><p class=copyright-item><span class=item-title>许可协议</span>
+<span class=item-content>版权声明：自由转载-非商用-非衍生-保持署名（<a rel="license noopener" href=https://creativecommons.org/licenses/by-nc-nd/4.0/deed.zh target=_blank>CC BY-NC-ND 4.0</a>）</span></p></div><footer class=post-footer><div class=post-tags><a href=/tags/go/>Go</a>
+<a href=/tags/%E6%95%99%E7%A8%8B/>教程</a></div><nav class=post-nav><a class=next href=/post/go/go%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0-12/><span class="next-text nav-default">Go学习笔记 12</span>
+<span class="next-text nav-mobile">下一篇</span>
+<i class="iconfont icon-right"></i></a></nav></footer></article></div><script src=https://utteranc.es/client.js repo=heyelhao/blog-comments issue-term=pathname theme=github-light crossorigin=anonymous async></script><noscript>Please enable JavaScript to view the <a href=https://github.com/utterance>comments powered by utterances.</a></noscript></div></main><footer id=footer class=footer><div class=social-links><a href=https://twitter.com/heyelhao class="iconfont icon-twitter" title=twitter></a><a href=https://github.com/heyelhao class="iconfont icon-github" title=github></a><a href=https://heyel.xyz/index.xml type=application/rss+xml class="iconfont icon-rss" title=rss></a></div><div class=copyright><span class=power-by>由 <a class=hexo-link href=https://gohugo.io>Hugo</a> 强力驱动</span>
+<span class=division>|</span>
+<span class=theme-info>主题 -
+<a class=theme-link href=https://github.com/olOwOlo/hugo-theme-even>Even</a></span><div class=busuanzi-footer><span id=busuanzi_container_site_pv>本站总访问量 <span id=busuanzi_value_site_pv><img src=/img/spinner.svg alt=spinner.svg></span> 次</span>
+<span class=division>|</span>
+<span id=busuanzi_container_site_uv>本站总访客数 <span id=busuanzi_value_site_uv><img src=/img/spinner.svg alt=spinner.svg></span> 人</span></div><span class=copyright-year>&copy;
+2020 -
+2021
+<span class=heart><i class="iconfont icon-heart"></i></span>
+<span class=author>Heyel</span></span></div></footer><div class=back-to-top id=back-to-top><i class="iconfont icon-up"></i></div></div><script src=https://cdn.jsdelivr.net/npm/jquery@3.2.1/dist/jquery.min.js integrity="sha256-hwg4gsxgFZhOsEEamdOYGBf13FyQuiTwlAQgxVSNgt4=" crossorigin=anonymous></script><script src=https://cdn.jsdelivr.net/npm/slideout@1.0.1/dist/slideout.min.js integrity="sha256-t+zJ/g8/KXIJMjSVQdnibt4dlaDxc9zXr/9oNPeWqdg=" crossorigin=anonymous></script><script src=https://cdn.jsdelivr.net/npm/@fancyapps/fancybox@3.1.20/dist/jquery.fancybox.min.js integrity="sha256-XVLffZaxoWfGUEbdzuLi7pwaUJv1cecsQJQqGLe7axY=" crossorigin=anonymous></script><script type=text/javascript src=/js/main.min.2517c0eb67172a0bae917de4af59b10ca2531411a009d4c0b82f5685259e5771.js></script></body></html>
